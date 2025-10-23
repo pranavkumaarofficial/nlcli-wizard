@@ -1,0 +1,94 @@
+[build-system]
+requires = ["setuptools>=68.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nlcli-wizard"
+version = "0.1.0"
+description = "Natural Language interface for Python CLI tools using locally-running Small Language Models"
+readme = "README.md"
+authors = [
+    {name = "Pranav Kumaar", email = "your.email@example.com"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: System :: Shells",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+keywords = ["cli", "natural-language", "llm", "slm", "command-line", "ai", "ml"]
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0.0,<9.0.0",
+    "rich>=13.0.0,<14.0.0",
+    "transformers>=4.46.0,<5.0.0",
+    "torch>=2.0.0,<3.0.0",
+    "llama-cpp-python>=0.2.0,<1.0.0",
+    "huggingface-hub>=0.20.0,<1.0.0",
+]
+
+[project.optional-dependencies]
+training = [
+    "unsloth>=2025.1",
+    "peft>=0.13.0,<1.0.0",
+    "trl>=0.12.0,<1.0.0",
+    "bitsandbytes>=0.44.0,<1.0.0",
+    "datasets>=2.14.0,<3.0.0",
+    "accelerate>=0.25.0,<1.0.0",
+]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+]
+all = [
+    "nlcli-wizard[training,dev]",
+]
+
+[project.urls]
+Homepage = "https://github.com/pranavkumar2004/nlcli-wizard"
+Repository = "https://github.com/pranavkumar2004/nlcli-wizard"
+Documentation = "https://github.com/pranavkumar2004/nlcli-wizard#readme"
+"Issue Tracker" = "https://github.com/pranavkumar2004/nlcli-wizard/issues"
+
+[project.scripts]
+nlcli-wizard = "nlcli_wizard.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nlcli_wizard*"]
+exclude = ["tests*", "docs*", "training*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+select = ["E", "F", "I", "N", "W", "B", "Q"]
+ignore = ["E501"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--strict-markers --cov=nlcli_wizard --cov-report=term-missing"
