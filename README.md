@@ -29,9 +29,10 @@ The wizard understands your intent, translates it to the correct command, and ex
 
 ## Technical Stack (2025 Latest)
 
-- **Base Model**: TinyLlama 1.1B (4-bit quantized)
-- **Training**: Unsloth (2x faster fine-tuning, 70% less memory)
+- **Base Model**: Gemma 3 1B (phone-optimized, released March 2025)
+- **Training**: Unsloth 2025.1+ (2x faster fine-tuning, 70% less memory, Dynamic 4-bit)
 - **Inference**: llama-cpp-python for local CPU execution
+- **Quantization**: GGUF Q4_K_M with importance matrix for optimal quality
 - **Optimization**: QLoRA + PEFT for efficient fine-tuning
 - **Training Platform**: Google Colab (T4 GPU)
 

@@ -65,3 +65,9 @@ history.json
 # Environment
 .env
 .env.local
+
+
+
+# .md files
+AGENT_INSTRUCTIONS.md
+VENVY_AUDIT_REPORT.md
