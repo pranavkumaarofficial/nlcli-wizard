@@ -1,0 +1,800 @@
+<start_of_turn>user
+Translate to venvy command: preview cleanup<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup --dry-run
+CONFIDENCE: 0.97
+EXPLANATION: Shows which environments would be removed without deleting
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: track this venv<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register
+CONFIDENCE: 0.90
+EXPLANATION: Registers the .venv in current directory
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: what venv am i in<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.88
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show venvs sorted by project<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort project
+CONFIDENCE: 0.94
+EXPLANATION: Lists environments sorted by linked project path
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list venvs in simple format<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --format simple
+CONFIDENCE: 0.93
+EXPLANATION: Lists environments in simple text format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: add this environment to registry<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register
+CONFIDENCE: 0.91
+EXPLANATION: Registers the .venv in current directory
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: preview cleanup<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup --dry-run
+CONFIDENCE: 0.96
+EXPLANATION: Shows which environments would be removed without deleting
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan home directory for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --home
+CONFIDENCE: 0.95
+EXPLANATION: Scans home directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list venvs by size in json<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort size --format json
+CONFIDENCE: 0.96
+EXPLANATION: Lists environments sorted by size in JSON format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: add environment from ./backend/.venv<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register ./backend/.venv
+CONFIDENCE: 0.92
+EXPLANATION: Registers virtual environment at ./backend/.venv
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: search home for environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --home
+CONFIDENCE: 0.93
+EXPLANATION: Scans home directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: setup bash integration<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy shell-hook --shell bash
+CONFIDENCE: 0.95
+EXPLANATION: Generates bash shell integration hook
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: what venv am i in<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.90
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show environment statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.94
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list venvs in json<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --format json
+CONFIDENCE: 0.95
+EXPLANATION: Lists environments in JSON format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show disk usage statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.89
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register ~/environments/test for project .<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register ~/environments/test --project .
+CONFIDENCE: 0.94
+EXPLANATION: Registers venv at ~/environments/test linked to .
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show me the stats<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.93
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show my venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls
+CONFIDENCE: 0.95
+EXPLANATION: Lists all registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: preview cleanup<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup --dry-run
+CONFIDENCE: 0.97
+EXPLANATION: Shows which environments would be removed without deleting
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: display current environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.91
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: find all venvs in home<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --home
+CONFIDENCE: 0.94
+EXPLANATION: Scans home directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: add venv linked to ../project<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register --project ../project
+CONFIDENCE: 0.93
+EXPLANATION: Registers .venv and links to project at ../project
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: setup bash integration<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy shell-hook --shell bash
+CONFIDENCE: 0.93
+EXPLANATION: Generates bash shell integration hook
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: add this environment to registry<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register
+CONFIDENCE: 0.92
+EXPLANATION: Registers the .venv in current directory
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show active venv<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.96
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show disk usage statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.90
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show environment statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.92
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: display current environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.92
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register environment for ./myapp project<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register -p ./myapp
+CONFIDENCE: 0.88
+EXPLANATION: Registers .venv and links to project at ./myapp
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list venvs by name<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort name
+CONFIDENCE: 0.94
+EXPLANATION: Lists environments sorted alphabetically by name
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: cleanup venvs older than 180 days<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup --days 180
+CONFIDENCE: 0.94
+EXPLANATION: Removes virtual environments unused for 180 days
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: what are my venv stats<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.89
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register this venv<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register
+CONFIDENCE: 0.95
+EXPLANATION: Registers the .venv in current directory
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan ~/code with depth 3<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --path ~/code --depth 3
+CONFIDENCE: 0.93
+EXPLANATION: Scans ~/code to depth 3 for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: display venv stats<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.93
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show active venv<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.94
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list venvs in json<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --format json
+CONFIDENCE: 0.95
+EXPLANATION: Lists environments in JSON format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register venv for project in C:/dev/myproject<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register --project C:/dev/myproject
+CONFIDENCE: 0.95
+EXPLANATION: Registers .venv and links to project at C:/dev/myproject
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: track this venv called production<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register -n production
+CONFIDENCE: 0.88
+EXPLANATION: Registers .venv with custom name 'production'
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: sort environments by size<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls -s size
+CONFIDENCE: 0.95
+EXPLANATION: Lists environments sorted by disk space used
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: what venv am i in<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.89
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: which venv am i using<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.94
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: which environment is activated<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.88
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: track venv in ./env<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register ./env
+CONFIDENCE: 0.88
+EXPLANATION: Registers virtual environment at ./env
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan ./projects for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --path ./projects
+CONFIDENCE: 0.93
+EXPLANATION: Scans ./projects for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: sort environments by size<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls -s size
+CONFIDENCE: 0.95
+EXPLANATION: Lists environments sorted by disk space used
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: clean up old environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup
+CONFIDENCE: 0.94
+EXPLANATION: Removes virtual environments unused for 90 days
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: which venv am i using<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.90
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: dry run cleanup<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup --dry-run
+CONFIDENCE: 0.92
+EXPLANATION: Shows which environments would be removed without deleting
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: setup bash integration<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy shell-hook --shell bash
+CONFIDENCE: 0.96
+EXPLANATION: Generates bash shell integration hook
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: clean up old environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup
+CONFIDENCE: 0.95
+EXPLANATION: Removes virtual environments unused for 90 days
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: sort environments by size<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls -s size
+CONFIDENCE: 0.95
+EXPLANATION: Lists environments sorted by disk space used
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: search home for environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --home
+CONFIDENCE: 0.90
+EXPLANATION: Scans home directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register current environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register
+CONFIDENCE: 0.90
+EXPLANATION: Registers the .venv in current directory
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: which environment is activated<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.92
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: cleanup venvs older than 30 days<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup --days 30
+CONFIDENCE: 0.95
+EXPLANATION: Removes virtual environments unused for 30 days
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: delete venvs unused for 60 days<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup -d 60
+CONFIDENCE: 0.92
+EXPLANATION: Removes virtual environments unused for 60 days
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register current environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register
+CONFIDENCE: 0.91
+EXPLANATION: Registers the .venv in current directory
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: find venvs in ./projects<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --path ./projects
+CONFIDENCE: 0.91
+EXPLANATION: Scans ./projects for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: display statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.92
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show environments sorted by recent use<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort recent
+CONFIDENCE: 0.91
+EXPLANATION: Lists environments sorted by most recently used
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list venvs by size<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort size
+CONFIDENCE: 0.92
+EXPLANATION: Lists environments sorted by disk space used
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: which venv am i using<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.91
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: track this venv called test-env<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register -n test-env
+CONFIDENCE: 0.89
+EXPLANATION: Registers .venv with custom name 'test-env'
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show me the stats<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.91
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan /opt/apps for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --path /opt/apps
+CONFIDENCE: 0.95
+EXPLANATION: Scans /opt/apps for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: search for venvs in current directory<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan
+CONFIDENCE: 0.91
+EXPLANATION: Scans current directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show me the stats<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.89
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: display current environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.89
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: add this environment named backend_env<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register --name backend_env
+CONFIDENCE: 0.90
+EXPLANATION: Registers .venv with custom name 'backend_env'
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan home directory for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --home
+CONFIDENCE: 0.94
+EXPLANATION: Scans home directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register venv for project in /home/user/projects/webapp<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register --project /home/user/projects/webapp
+CONFIDENCE: 0.93
+EXPLANATION: Registers .venv and links to project at /home/user/projects/webapp
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: find venvs up to 2 levels deep<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --depth 2
+CONFIDENCE: 0.90
+EXPLANATION: Scans current directory to depth 2 for venvs
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: which environment is activated<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.89
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan with depth 1<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --depth 1
+CONFIDENCE: 0.91
+EXPLANATION: Scans current directory to depth 1 for venvs
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: install shell hook<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy shell-hook
+CONFIDENCE: 0.94
+EXPLANATION: Generates shell integration hook (auto-detects shell)
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: delete old environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy cleanup
+CONFIDENCE: 0.93
+EXPLANATION: Removes virtual environments unused for 90 days
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show venvs as json<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls -f json
+CONFIDENCE: 0.92
+EXPLANATION: Lists environments in JSON format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show recent venvs as table<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort recent --format table
+CONFIDENCE: 0.92
+EXPLANATION: Lists environments sorted by recent use in table format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan home directory for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --home
+CONFIDENCE: 0.94
+EXPLANATION: Scans home directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register the venv at C:/projects/app/venv<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register C:/projects/app/venv
+CONFIDENCE: 0.94
+EXPLANATION: Registers virtual environment at C:/projects/app/venv
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show disk usage statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.89
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: what environment is active<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.90
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show environments as table<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --format table
+CONFIDENCE: 0.93
+EXPLANATION: Lists environments in table format
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register /home/user/envs/myenv as webapp<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register /home/user/envs/myenv --name webapp
+CONFIDENCE: 0.95
+EXPLANATION: Registers venv at /home/user/envs/myenv with name 'webapp'
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show registered environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls
+CONFIDENCE: 0.90
+EXPLANATION: Lists all registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show environments sorted by recent use<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls --sort recent
+CONFIDENCE: 0.95
+EXPLANATION: Lists environments sorted by most recently used
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show environment statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.91
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan
+CONFIDENCE: 0.91
+EXPLANATION: Scans current directory for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: what are my venv stats<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.87
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register the venv at ~/environments/test<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register ~/environments/test
+CONFIDENCE: 0.95
+EXPLANATION: Registers virtual environment at ~/environments/test
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: register environment for ~/code/backend project<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy register -p ~/code/backend
+CONFIDENCE: 0.91
+EXPLANATION: Registers .venv and links to project at ~/code/backend
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show me the active environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.90
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan ~/code for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --path ~/code
+CONFIDENCE: 0.95
+EXPLANATION: Scans ~/code for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: scan C:/dev for venvs<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan --path C:/dev
+CONFIDENCE: 0.97
+EXPLANATION: Scans C:/dev for virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: display statistics<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy stats
+CONFIDENCE: 0.90
+EXPLANATION: Shows statistics about registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: search 1 directories deep<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy scan -d 1
+CONFIDENCE: 0.91
+EXPLANATION: Scans current directory to depth 1 for venvs
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: list all environments<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy ls
+CONFIDENCE: 0.96
+EXPLANATION: Lists all registered virtual environments
+<end_of_turn><end_of_turn>
+
+<start_of_turn>user
+Translate to venvy command: show current environment<end_of_turn>
+<start_of_turn>model
+COMMAND: venvy current
+CONFIDENCE: 0.97
+EXPLANATION: Shows currently active virtual environment
+<end_of_turn><end_of_turn>
+
