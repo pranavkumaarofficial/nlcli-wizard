@@ -4,6 +4,8 @@
 
 A framework that enables natural language interaction with any Python command-line tool using locally-running Small Language Models (SLMs). No cloud dependencies, no API keys - everything runs on your machine.
 
+**Note**: This is a portfolio/research project exploring the intersection of SLMs and developer tooling. While functional, it's optimized for learning and demonstration rather than production-scale deployment.
+
 ## What It Does
 
 Instead of memorizing complex CLI flags and syntax:
@@ -21,15 +23,15 @@ The wizard understands your intent, translates it to the correct command, and ex
 ## Key Features
 
 - **Locally Running**: Fine-tuned SLM runs entirely on your CPU (~650MB)
-- **Zero Cloud Calls**: No API keys, no data leaves your machine
+- **Zero Cloud Calls**: No API keys, fully offline
 - **Fast Inference**: <2s response time on modern CPUs
 - **Extensible Framework**: Easy to adapt for any Python CLI tool
 - **Safe Execution**: Always previews commands before execution
 - **Fallback Support**: If model fails, falls back to standard CLI
 
-## Technical Stack (2025 Latest)
+## Technical Stack
 
-- **Base Model**: Gemma 3 1B (phone-optimized, released March 2025)
+- **Base Model**: Gemma 3 1B (phone-optimized, ~ March 2025)
 - **Training**: Unsloth 2025.1+ (2x faster fine-tuning, 70% less memory, Dynamic 4-bit)
 - **Inference**: llama-cpp-python for local CPU execution
 - **Quantization**: GGUF Q4_K_M with importance matrix for optimal quality
@@ -64,6 +66,7 @@ The wizard understands your intent, translates it to the correct command, and ex
 
 ### Demonstrated (venvy)
 Virtual environment management with natural language
+[venvy](https://github.com/pranavkumaarofficial/venvy) - Fast virtual environment manager (first use-case for nlcli-wizard)
 
 ### Future Extensions
 - **pytest-wizard**: "run all tests in the auth module"
@@ -123,7 +126,7 @@ MIT
 
 ## Related Projects
 
-- [venvy](https://github.com/pranavkumar2004/venvy) - Fast virtual environment manager (first use-case for nlcli-wizard)
+- [venvy](https://github.com/pranavkumaarofficial/venvy) - Fast virtual environment manager (first use-case for nlcli-wizard)
 
 ## Author
 
@@ -131,4 +134,3 @@ Pranav Kumaar
 
 ---
 
-**Note**: This is a portfolio/research project exploring the intersection of SLMs and developer tooling. While functional, it's optimized for learning and demonstration rather than production-scale deployment.
