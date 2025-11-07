@@ -1,136 +1,100 @@
 # nlcli-wizard
 
-**Natural Language Interface for Python CLI Tools**
-
-A framework that enables natural language interaction with any Python command-line tool using locally-running Small Language Models (SLMs). No cloud dependencies, no API keys - everything runs on your machine.
-
-**Note**: This is a portfolio/research project exploring the intersection of SLMs and developer tooling. While functional, it's optimized for learning and demonstration rather than production-scale deployment.
-
-## What It Does
-
-Instead of memorizing complex CLI flags and syntax:
+Natural language control for Python CLI tools using locally-trained SLMs. No cloud, no API keys, runs offline on CPU.
 
 ```bash
-# Traditional CLI
-venvy create --python 3.10 --name myenv --location ./envs/
+# Instead of memorizing flags
+venvy register --project /path/to/project --name myenv
 
-# With nlcli-wizard
-venvy -w "create a Python 3.10 environment called myenv"
+# Just describe what you want
+venvy -w "register this project as myenv"
 ```
 
-The wizard understands your intent, translates it to the correct command, and executes it - all using a tiny, locally-trained language model.
+**Portfolio project** demonstrating local LLM fine-tuning for developer tooling.
 
-## Key Features
+## Results
 
-- **Locally Running**: Fine-tuned SLM runs entirely on your CPU (~650MB)
-- **Zero Cloud Calls**: No API keys, fully offline
-- **Fast Inference**: <2s response time on modern CPUs
-- **Extensible Framework**: Easy to adapt for any Python CLI tool
-- **Safe Execution**: Always previews commands before execution
-- **Fallback Support**: If model fails, falls back to standard CLI
+- **83.3% accuracy** on venvy command translation
+- **810MB model** (Q4_K_M quantized from 2.01GB)
+- **~1.5s inference** on CPU (4 threads)
+- **Zero fabrication** - all training data verified against source code
+- **1,500 training examples** generated programmatically
 
 ## Technical Stack
 
-- **Base Model**: Gemma 3 1B (phone-optimized, ~ March 2025)
-- **Training**: Unsloth 2025.1+ (2x faster fine-tuning, 70% less memory, Dynamic 4-bit)
-- **Inference**: llama-cpp-python for local CPU execution
-- **Quantization**: GGUF Q4_K_M with importance matrix for optimal quality
-- **Optimization**: QLoRA + PEFT for efficient fine-tuning
-- **Training Platform**: Google Colab (T4 GPU)
+- **Base**: google/gemma-3-1b-it (March 2025)
+- **Training**: Unsloth 2025.1+ with QLoRA (2x speed, 70% less VRAM)
+- **Quantization**: GGUF Q4_K_M with smart fallback (Q4_K/Q5_0/Q6_K mix)
+- **Inference**: llama.cpp for CPU execution
+- **Data**: 1,500 verified examples in Alpaca format
+- **Loss**: 0.135 (train), 0.142 (val) - no overfitting
 
-## Architecture
+## How It Works
 
 ```
-┌─────────────────┐
-│  User Input     │  "create a Python 3.10 venv called test"
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│  NL Parser      │  Tokenize & normalize
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│  SLM Inference  │  TinyLlama 1.1B (quantized)
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│  Command Gen    │  "venvy create --python 3.10 --name test"
-└────────┬────────┘
-         │
-┌────────▼────────┐
-│  Preview/Exec   │  Show command → Confirm → Execute
-└─────────────────┘
+User: "show my venvs sorted by size"
+  ↓
+Gemma 3 1B (fine-tuned)
+  ↓
+Command: venvy ls --sort size
+  ↓
+Preview → Confirm → Execute
 ```
 
-## Use Cases
-
-### Demonstrated (venvy)
-Virtual environment management with natural language
-[venvy](https://github.com/pranavkumaarofficial/venvy) - Fast virtual environment manager (first use-case for nlcli-wizard)
-
-### Future Extensions
-- **pytest-wizard**: "run all tests in the auth module"
-- **git-wizard**: "create a new branch from main for the login feature"
-- **pip-wizard**: "install the latest version of requests"
+Training pipeline:
+1. Generate synthetic dataset from CLI help docs
+2. Fine-tune Gemma 3 1B with QLoRA on Colab T4
+3. Quantize to Q4_K_M with llama.cpp
+4. Run locally with llama-cpp-python
 
 ## Project Status
 
-**Current Phase**: Dataset Generation & Model Training
+- [x] Dataset generation (1,500 verified examples)
+- [x] Fine-tuned Gemma 3 1B with QLoRA
+- [x] Quantized to Q4_K_M (810MB)
+- [x] Validated 83.3% accuracy
+- [ ] CLI integration with venvy
+- [ ] PyPI package release
 
-- [x] Framework architecture design
-- [x] Technical analysis & stack selection
-- [ ] Generate training dataset (1,500+ examples)
-- [ ] Fine-tune TinyLlama with Unsloth
-- [ ] Integrate with venvy as proof-of-concept
-- [ ] Quantize & optimize for CPU inference
-- [ ] Package for PyPI distribution
+## Technical Deep Dive
 
-## Implementation Plan
+**Key learnings for local LLM deployment:**
 
-See [IMPLEMENTATION_PLAN.md](docs/IMPLEMENTATION_PLAN.md) for the complete 5-week roadmap.
+1. **QLoRA Training**: Only 1.29% of parameters trainable (14M/1.1B) using low-rank adapters
+2. **Dynamic 4-bit**: Unsloth's dynamic quantization saves 70% VRAM during training
+3. **Smart Quantization**: Mixed precision (Q4_K/Q5_0/Q6_K) adapts per-layer based on tensor dimensions
+4. **Zero Fabrication**: Verified all commands against source code to prevent hallucination
+5. **Alpaca Format**: Instruction/input/output structure for consistent fine-tuning
 
-## Why This Project?
+**Training metrics:**
+- 3 epochs @ 2.5 hours (Colab T4)
+- Final loss: 0.135 (train), 0.142 (val)
+- Manual test: 6/6 correct (100%)
+- Validation: 125/150 correct (83.3%)
 
-This started as a way to make CLI tools more accessible, but evolved into a technical showcase demonstrating:
+See [training/](training/) for complete notebooks and scripts.
 
-- **ML Engineering**: Fine-tuning SLMs with modern techniques (Unsloth, QLoRA)
-- **Local-First AI**: Running LLMs efficiently on consumer hardware
-- **Software Architecture**: Designing extensible, framework-level solutions
-- **UX Innovation**: Bridging the gap between natural language and technical tools
+## Use Case: venvy
 
-## Installation (Coming Soon)
+Proof-of-concept integration with [venvy](https://github.com/pranavkumaarofficial/venvy) - a fast Python virtual environment manager.
 
-```bash
-pip install nlcli-wizard
+Supports 7 commands: `register`, `ls`, `scan`, `current`, `cleanup`, `shell-hook`, `stats`
 
-# For venvy integration
-pip install venvy
-venvy -w "your natural language command"
+**Example translations:**
+```
+"show my environments" → venvy ls
+"register this project as myenv" → venvy register --name myenv
+"clean up old venvs" → venvy cleanup --days 90
 ```
 
-## Training Your Own
+## Files of Interest
 
-See [docs/TRAINING_GUIDE.md](docs/TRAINING_GUIDE.md) for instructions on adapting nlcli-wizard for your own CLI tool.
-
-## Performance Expectations
-
-- **Model Size**: ~650MB (4-bit quantized)
-- **Inference Time**: <2s on CPU
-- **Accuracy**: 75-85% on domain-specific commands
-- **RAM Usage**: ~2GB during inference
-- **Training Time**: ~2-3 hours on Colab T4 GPU
+- [dataset.py](nlcli_wizard/dataset.py) - Synthetic data generation with zero fabrication
+- [train_gemma3_colab.ipynb](training/train_gemma3_colab.ipynb) - Complete training pipeline
+- [evaluate_accuracy.py](test/evaluate_accuracy.py) - Validation script
+- [TRAINING_GUIDE_COLAB.md](docs/TRAINING_GUIDE_COLAB.md) - Technical deep dive
 
 ## License
 
-MIT
-
-## Related Projects
-
-- [venvy](https://github.com/pranavkumaarofficial/venvy) - Fast virtual environment manager (first use-case for nlcli-wizard)
-
-## Author
-
-Pranav Kumaar
-
----
+MIT - Pranav Kumaar
 
