@@ -68,12 +68,23 @@ history.json
 
 
 
-# .md files
-AGENT_INSTRUCTIONS.md
-VENVY_AUDIT_REPORT.md
+# Internal docs (keep private)
+docs/AGENT_INSTRUCTIONS.md
+docs/VENVY_AUDIT_REPORT.md
+docs/DATASET_GENERATION_REPORT.md
+docs/TECHNICAL_ANALYSIS.md
 
-DATASET_GENERATION_REPORT.md
+# Build artifacts (from Colab - don't commit)
+/llama.cpp/
+/venvy_gemma3_lora/
+/venvy_gemma3_merged/
+venvy_imatrix.dat
+imatrix_data.txt
+/unsloth_compiled_cache/
 
-
+# Internal notes
 /notes
+
+
+PRE_PUSH_CHECKLIST.md
 /docs

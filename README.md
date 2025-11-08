@@ -1,6 +1,12 @@
 # nlcli-wizard
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Reddit Discussion](https://img.shields.io/badge/Reddit-Discussion-orange.svg)](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/)
+
 Natural language control for Python CLI tools using locally-trained SLMs. No cloud, no API keys, runs offline on CPU.
+
+> **📢 Discussion:** See the [Reddit thread](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/) for technical discussion and community feedback.
 
 ```bash
 # Instead of memorizing flags
@@ -90,11 +96,25 @@ Supports 7 commands: `register`, `ls`, `scan`, `current`, `cleanup`, `shell-hook
 ## Files of Interest
 
 - [dataset.py](nlcli_wizard/dataset.py) - Synthetic data generation with zero fabrication
-- [train_gemma3_colab.ipynb](training/train_gemma3_colab.ipynb) - Complete training pipeline
+- [train_gemma3_colab.ipynb](training/train_gemma3_colab.ipynb) - Complete training pipeline (coming soon)
 - [evaluate_accuracy.py](test/evaluate_accuracy.py) - Validation script
 - [TRAINING_GUIDE_COLAB.md](docs/TRAINING_GUIDE_COLAB.md) - Technical deep dive
 
+## Contributing
+
+Interested in contributing? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for:
+- Adding support for new CLI tools
+- Improving accuracy and data quality
+- Mobile deployment and benchmarking
+- Testing and validation
+
+## Community & Discussion
+
+- **Reddit:** [r/LocalLLaMA discussion](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/)
+- **Issues:** [GitHub Issues](https://github.com/pranavkumaarofficial/nlcli-wizard/issues)
+- **Related:** [venvy](https://github.com/pranavkumaarofficial/venvy) - Virtual environment manager
+
 ## License
 
-MIT - Pranav Kumaar
+[MIT License](LICENSE) - Pranav Kumaar
 

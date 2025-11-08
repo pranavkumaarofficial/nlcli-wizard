@@ -57,10 +57,10 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/pranavkumar2004/nlcli-wizard"
-Repository = "https://github.com/pranavkumar2004/nlcli-wizard"
-Documentation = "https://github.com/pranavkumar2004/nlcli-wizard#readme"
-"Issue Tracker" = "https://github.com/pranavkumar2004/nlcli-wizard/issues"
+Homepage = "https://github.com/pranavkumaarofficial/nlcli-wizard"
+Repository = "https://github.com/pranavkumaarofficial/nlcli-wizard"
+Documentation = "https://github.com/pranavkumaarofficial/nlcli-wizard#readme"
+"Issue Tracker" = "https://github.com/pranavkumaarofficial/nlcli-wizard/issues"
 
 [project.scripts]
 nlcli-wizard = "nlcli_wizard.cli:main"
