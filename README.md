@@ -134,6 +134,5 @@ Interested in contributing? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for:
 [MIT License](LICENSE) - Pranav Kumaar
 
 ## Star History
-## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=pranavkumaarofficial/nlcli-wizard&type=date&legend=top-left)](https://www.star-history.com/#pranavkumaarofficial/nlcli-wizard&type=date&legend=top-left)
