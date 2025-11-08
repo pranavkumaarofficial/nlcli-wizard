@@ -2,11 +2,14 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1uBJJ_EqCMT8bMnCnVQHeN8USKu1ABddL?usp=sharing)
 [![Reddit Discussion](https://img.shields.io/badge/Reddit-Discussion-orange.svg)](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/)
 
 Natural language control for Python CLI tools using locally-trained SLMs. No cloud, no API keys, runs offline on CPU.
 
 > **📢 Discussion:** See the [Reddit thread](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/) for technical discussion and community feedback.
+>
+> **🚀 Quick Start:** Train your own model in [Google Colab](https://colab.research.google.com/drive/1uBJJ_EqCMT8bMnCnVQHeN8USKu1ABddL?usp=sharing) (free T4 GPU, ~2.5 hours)
 
 ```bash
 # Instead of memorizing flags
@@ -78,7 +81,19 @@ Training pipeline:
 - Manual test: 6/6 correct (100%)
 - Validation: 125/150 correct (83.3%)
 
-See [training/](training/) for complete notebooks and scripts.
+### 🎓 Train Your Own Model
+
+**Interactive Tutorial:** [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1uBJJ_EqCMT8bMnCnVQHeN8USKu1ABddL?usp=sharing)
+
+Complete training pipeline with step-by-step explanations:
+- Fine-tune Gemma 3 1B with QLoRA
+- Generate importance matrix for smart quantization
+- Convert to GGUF for CPU inference
+- Test locally with llama-cpp-python
+
+No ML experience required - runs on free Colab T4 GPU in ~2.5 hours.
+
+See [training/](training/) for additional notebooks and scripts.
 
 ## Use Case: venvy
 
