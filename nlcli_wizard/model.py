@@ -221,8 +221,8 @@ class ModelTrainingConfig:
     def __init__(
         self,
         base_model: str = "TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-        dataset_path: Path = Path("data/training_examples.jsonl"),
-        output_dir: Path = Path("models/trained"),
+        dataset_path: Path = Path("assets/data/training_examples.jsonl"),
+        output_dir: Path = Path("assets/models/trained"),
         num_epochs: int = 3,
         learning_rate: float = 2e-4,
         batch_size: int = 4,

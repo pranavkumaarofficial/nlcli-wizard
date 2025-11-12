@@ -27,7 +27,7 @@ ENV/
 .venv
 
 # Models (too large for git)
-models/
+assets/models/
 *.gguf
 *.bin
 *.safetensors
