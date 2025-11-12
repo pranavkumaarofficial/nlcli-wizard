@@ -27,11 +27,11 @@ ENV/
 .venv
 
 # Models (too large for git)
-assets/models/
-*.gguf
+models/
 *.bin
-*.safetensors
+*.gguf
 *.pth
+*.safetensors
 
 # Model cache
 .cache/
