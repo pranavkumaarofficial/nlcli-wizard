@@ -136,3 +136,6 @@ Interested in contributing? Check out [CONTRIBUTING.md](CONTRIBUTING.md) for:
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=pranavkumaarofficial/nlcli-wizard&type=date&legend=top-left)](https://www.star-history.com/#pranavkumaarofficial/nlcli-wizard&type=date&legend=top-left)
+
+💡 This project is maintained by [Pranav Kumaar](https://github.com/pranavkumaarofficial)
+All external contributions are licensed under the MIT License.
