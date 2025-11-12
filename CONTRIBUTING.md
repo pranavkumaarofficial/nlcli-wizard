@@ -170,6 +170,12 @@ Found a bug? Open an issue with:
 - Focus on technical merit
 - Help others learn
 - No spam or self-promotion
+- By submitting a Pull Request, contributors agree that:
+  - Their contributions are made under the same **MIT License** as this repository.
+  - Copyright and overall ownership of the project remain with **Pranav Kumaar** (the project maintainer).
+  - Contributions may be modified, merged, or redistributed as part of the project under the MIT terms.
+
+
 
 ## 🙏 Recognition
 
