@@ -1,10 +1,12 @@
 import json
 from pathlib import Path
 from typing import List, Dict, Any
+import random
 
 # Run with: python -m nlcli_wizard.data_pipeline.transform.mart_gemma
 # This will produce the final training file at `assets/data/mart/gemma.jsonl`.
 # The final file will be a JSONL file where each line is a single JSON object containing only the required `"text"` field for the `SFTTrainer`.
+# This also shuffles the data
 
 # Gemma 3 Chat Template Constants
 # This template is used to format each Q&A pair into a single, cohesive chat turn 
@@ -84,7 +86,7 @@ class StagingToMartTransformer:
         # Return the record with the new "text" field
         return {"text": text}
 
-    def run(self):
+    def run(self, seed: int = 42):
         """Executes the full Mart transformation pipeline."""
         
         print("-" * 40)
@@ -96,10 +98,16 @@ class StagingToMartTransformer:
             print("Mart transformation aborted due to empty dataset.")
             return
 
-        # 1. Transform all records
+        # 1. Shuffle the dataset reproducibly
+        print(f"\nShuffling merged dataset with random seed = {seed} ...")
+        random.Random(seed).shuffle(merged_data)
+        print(f"Shuffling complete. Sample record after shuffle:")
+        print(json.dumps(merged_data[0], indent=2, ensure_ascii=False))
+
+        # 2. Transform all records
         formatted_data = [self.format_record_for_gemma(record) for record in merged_data]
         
-        # 2. Save the mart layer file
+        # 3. Save the mart layer file
         self.mart_dir.mkdir(parents=True, exist_ok=True)
         
         print(f"\nSaving final mart data to: {self.mart_file_path}")
@@ -107,7 +115,6 @@ class StagingToMartTransformer:
             for record in formatted_data:
                 json.dump(record, outfile, ensure_ascii=False)
                 outfile.write('\n')
-
         print("-" * 40)
         print(f"SUCCESS: Mart pipeline finished. Total records: {len(formatted_data)}")
         print(f"Output saved to: {self.mart_file_path.resolve()}")
