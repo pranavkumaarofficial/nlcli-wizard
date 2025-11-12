@@ -6,7 +6,7 @@ llm = Llama(model_path="assets/models/gemma3/base/venvy_gemma3_q4km.gguf", n_ctx
 
 # Load validation set
 with open('assets/data/mart/gemma.jsonl') as f:
-    examples = [json.loads(line) for line in f][-150:]  # Last 150 = validation
+    examples = [json.loads(line) for line in f][-392:]  # Last 392 = validation
 
 correct = 0
 total = len(examples)
