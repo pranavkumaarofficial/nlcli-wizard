@@ -100,5 +100,5 @@ class HuggingFaceScraper:
 
         print(f"Download complete. Files saved to: {target_dir.resolve()}")
         
-        # Pass the target_dir Path object to the cleanup method ---
+        # Pass the target_dir Path object to the cleanup method
         self._clean_huggingface_cache(target_dir)

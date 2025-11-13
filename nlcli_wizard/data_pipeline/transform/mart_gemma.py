@@ -98,7 +98,7 @@ class StagingToMartTransformer:
             print("Mart transformation aborted due to empty dataset.")
             return
 
-        # 1. Shuffle the dataset reproducibly
+        # 1. Shuffle the dataset (reproducibly) for ML training
         print(f"\nShuffling merged dataset with random seed = {seed} ...")
         random.Random(seed).shuffle(merged_data)
         print(f"Shuffling complete. Sample record after shuffle:")
