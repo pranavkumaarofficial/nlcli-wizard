@@ -563,7 +563,7 @@ def main():
     examples = generator.generate_examples(num_examples=1500)
 
     # Save to data directory
-    output_path = Path(__file__).parent.parent / "assets" / "data" / "venvy_training.jsonl"
+    output_path = Path(__file__).parent.parent / "assets" / "data" / "staging" / "virutal_environments" / "stg_venvy_training.jsonl"
     generator.save_to_jsonl(examples, output_path)
 
     # Validate and show statistics
