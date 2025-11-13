@@ -1,3 +1,8 @@
+"""
+Staging layer dataset generation for Docker commands.
+
+This transforms the base layer data `dockerNLcommands`, downloaded from HuggingFace
+"""
 import json
 from pathlib import Path
 
