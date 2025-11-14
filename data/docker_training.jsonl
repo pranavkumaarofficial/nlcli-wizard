@@ -1,0 +1,574 @@
+{"instruction": "Translate this to a docker command: scale web service to 2 instances", "input": "", "output": "docker-compose up -d --scale web=2"}
+{"instruction": "Translate this to a docker command: scale worker service to 5 instances", "input": "", "output": "docker-compose up -d --scale worker=5"}
+{"instruction": "Translate this to a docker command: expose nginx on port 9000", "input": "", "output": "docker run -p 9000:80 nginx"}
+{"instruction": "Translate this to a docker command: run ls in /app directory of container web", "input": "", "output": "docker exec -w /app web ls"}
+{"instruction": "Translate this to a docker command: build api tagged 2.0", "input": "", "output": "docker build -t api:2.0 ."}
+{"instruction": "Translate this to a docker command: create network backend-net", "input": "", "output": "docker network create backend-net"}
+{"instruction": "Translate this to a docker command: start redis container", "input": "", "output": "docker run redis"}
+{"instruction": "Translate this to a docker command: run redis on port 6379", "input": "", "output": "docker run -p 6379:6379 redis"}
+{"instruction": "Translate this to a docker command: expose nginx on port 8080", "input": "", "output": "docker run -p 8080:80 nginx"}
+{"instruction": "Translate this to a docker command: show details of volume mydata", "input": "", "output": "docker volume inspect mydata"}
+{"instruction": "Translate this to a docker command: scale worker service to 3 instances", "input": "", "output": "docker-compose up -d --scale worker=3"}
+{"instruction": "Translate this to a docker command: stop compose services", "input": "", "output": "docker-compose down"}
+{"instruction": "Translate this to a docker command: run nginx container", "input": "", "output": "docker run nginx"}
+{"instruction": "Translate this to a docker command: show all networks", "input": "", "output": "docker network ls"}
+{"instruction": "Translate this to a docker command: scale worker to 2", "input": "", "output": "docker-compose up -d --scale worker=2"}
+{"instruction": "Translate this to a docker command: show stats for container api", "input": "", "output": "docker stats api"}
+{"instruction": "Translate this to a docker command: delete unused networks", "input": "", "output": "docker network prune"}
+{"instruction": "Translate this to a docker command: execute bash in redis", "input": "", "output": "docker-compose exec redis bash"}
+{"instruction": "Translate this to a docker command: display logs of nginx", "input": "", "output": "docker logs nginx"}
+{"instruction": "Translate this to a docker command: detach web from mynet", "input": "", "output": "docker network disconnect mynet web"}
+{"instruction": "Translate this to a docker command: interactive python shell", "input": "", "output": "docker run -it python python"}
+{"instruction": "Translate this to a docker command: run nginx on port 3000", "input": "", "output": "docker run -p 3000:80 nginx"}
+{"instruction": "Translate this to a docker command: run mongo named mongodb", "input": "", "output": "docker run --name mongodb mongo"}
+{"instruction": "Translate this to a docker command: launch postgres", "input": "", "output": "docker run postgres"}
+{"instruction": "Translate this to a docker command: build frontend tagged latest", "input": "", "output": "docker build -t frontend:latest ."}
+{"instruction": "Translate this to a docker command: attach api to appnet", "input": "", "output": "docker network connect appnet api"}
+{"instruction": "Translate this to a docker command: clean up docker system", "input": "", "output": "docker system prune"}
+{"instruction": "Translate this to a docker command: run sh in container app", "input": "", "output": "docker exec -it app sh"}
+{"instruction": "Translate this to a docker command: build image tagged api version 1.0", "input": "", "output": "docker build -t api:1.0 ."}
+{"instruction": "Translate this to a docker command: create bridge network mynet", "input": "", "output": "docker network create mynet"}
+{"instruction": "Translate this to a docker command: build and tag as webapp 1.0", "input": "", "output": "docker build -t webapp:1.0 ."}
+{"instruction": "Translate this to a docker command: make volume mysql-data", "input": "", "output": "docker volume create mysql-data"}
+{"instruction": "Translate this to a docker command: run redis with password secret", "input": "", "output": "docker run -e REDIS_PASSWORD=secret redis"}
+{"instruction": "Translate this to a docker command: show details of network mynet", "input": "", "output": "docker network inspect mynet"}
+{"instruction": "Translate this to a docker command: run mongo with volume mongo-data:/data/db", "input": "", "output": "docker run -v mongo-data:/data/db mongo"}
+{"instruction": "Translate this to a docker command: scale worker to 3", "input": "", "output": "docker-compose up -d --scale worker=3"}
+{"instruction": "Translate this to a docker command: connect container app to network mynet", "input": "", "output": "docker network connect mynet app"}
+{"instruction": "Translate this to a docker command: open shell in redis", "input": "", "output": "docker-compose exec redis sh"}
+{"instruction": "Translate this to a docker command: build and tag as frontend 1.0", "input": "", "output": "docker build -t frontend:1.0 ."}
+{"instruction": "Translate this to a docker command: inspect container app", "input": "", "output": "docker inspect app"}
+{"instruction": "Translate this to a docker command: show current directory in container api", "input": "", "output": "docker exec api pwd"}
+{"instruction": "Translate this to a docker command: start compose detached", "input": "", "output": "docker-compose up -d"}
+{"instruction": "Translate this to a docker command: inspect volume postgres-data", "input": "", "output": "docker volume inspect postgres-data"}
+{"instruction": "Translate this to a docker command: show logs for container nginx", "input": "", "output": "docker logs nginx"}
+{"instruction": "Translate this to a docker command: create volume cache-vol", "input": "", "output": "docker volume create cache-vol"}
+{"instruction": "Translate this to a docker command: build and tag as myapp 1.0", "input": "", "output": "docker build -t myapp:1.0 ."}
+{"instruction": "Translate this to a docker command: open shell in container db", "input": "", "output": "docker exec -it db bash"}
+{"instruction": "Translate this to a docker command: run nginx named web", "input": "", "output": "docker run --name web nginx"}
+{"instruction": "Translate this to a docker command: show images with digests", "input": "", "output": "docker images --digests"}
+{"instruction": "Translate this to a docker command: expose node on port 8000", "input": "", "output": "docker run -p 8000:3000 node"}
+{"instruction": "Translate this to a docker command: run sh in container backend", "input": "", "output": "docker exec -it backend sh"}
+{"instruction": "Translate this to a docker command: connect container db to network mynet", "input": "", "output": "docker network connect mynet db"}
+{"instruction": "Translate this to a docker command: execute bash in backend", "input": "", "output": "docker exec -it backend bash"}
+{"instruction": "Translate this to a docker command: show details of network backend-net", "input": "", "output": "docker network inspect backend-net"}
+{"instruction": "Translate this to a docker command: build image tagged backend version 2.0", "input": "", "output": "docker build -t backend:2.0 ."}
+{"instruction": "Translate this to a docker command: map port 6380 to 6379 for redis", "input": "", "output": "docker run -p 6380:6379 redis"}
+{"instruction": "Translate this to a docker command: stop and remove volumes", "input": "", "output": "docker-compose down -v"}
+{"instruction": "Translate this to a docker command: show docker volumes", "input": "", "output": "docker volume ls"}
+{"instruction": "Translate this to a docker command: run mysql with password password", "input": "", "output": "docker run -e MYSQL_ROOT_PASSWORD=password mysql"}
+{"instruction": "Translate this to a docker command: start redis container named session-store", "input": "", "output": "docker run --name session-store redis"}
+{"instruction": "Translate this to a docker command: detach app from mynet", "input": "", "output": "docker network disconnect mynet app"}
+{"instruction": "Translate this to a docker command: list container ids only", "input": "", "output": "docker ps -q"}
+{"instruction": "Translate this to a docker command: expose node on port 3000", "input": "", "output": "docker run -p 3000:3000 node"}
+{"instruction": "Translate this to a docker command: run bash in worker service", "input": "", "output": "docker-compose exec worker bash"}
+{"instruction": "Translate this to a docker command: start redis with env REDIS_PASSWORD set to secret", "input": "", "output": "docker run -e REDIS_PASSWORD=secret redis"}
+{"instruction": "Translate this to a docker command: disconnect container api from network mynet", "input": "", "output": "docker network disconnect mynet api"}
+{"instruction": "Translate this to a docker command: remove volume mydata", "input": "", "output": "docker volume rm mydata"}
+{"instruction": "Translate this to a docker command: mount volume /app/data:/var/lib/postgresql/data in postgres", "input": "", "output": "docker run -v /app/data:/var/lib/postgresql/data postgres"}
+{"instruction": "Translate this to a docker command: list files in container api", "input": "", "output": "docker exec api ls"}
+{"instruction": "Translate this to a docker command: build and tag as api 2.0", "input": "", "output": "docker build -t api:2.0 ."}
+{"instruction": "Translate this to a docker command: run mongo on port 27018", "input": "", "output": "docker run -p 27018:27017 mongo"}
+{"instruction": "Translate this to a docker command: build api with build arg env production tagged latest", "input": "", "output": "docker build --build-arg ENV=production -t api:latest ."}
+{"instruction": "Translate this to a docker command: prune all unused data", "input": "", "output": "docker system prune -a"}
+{"instruction": "Translate this to a docker command: run bash in container api", "input": "", "output": "docker exec -it api bash"}
+{"instruction": "Translate this to a docker command: run bash in container app", "input": "", "output": "docker exec -it app bash"}
+{"instruction": "Translate this to a docker command: follow logs of db", "input": "", "output": "docker-compose logs -f db"}
+{"instruction": "Translate this to a docker command: build from Dockerfile.prod", "input": "", "output": "docker build -f Dockerfile.prod ."}
+{"instruction": "Translate this to a docker command: display logs of backend", "input": "", "output": "docker logs backend"}
+{"instruction": "Translate this to a docker command: start nginx container named server", "input": "", "output": "docker run --name server nginx"}
+{"instruction": "Translate this to a docker command: list files in /var/log of web", "input": "", "output": "docker exec -w /var/log web ls"}
+{"instruction": "Translate this to a docker command: detach api from mynet", "input": "", "output": "docker network disconnect mynet api"}
+{"instruction": "Translate this to a docker command: start postgres in detached mode", "input": "", "output": "docker run -d postgres"}
+{"instruction": "Translate this to a docker command: create postgres container called database", "input": "", "output": "docker run --name database postgres"}
+{"instruction": "Translate this to a docker command: run mysql with password rootpass", "input": "", "output": "docker run -e MYSQL_ROOT_PASSWORD=rootpass mysql"}
+{"instruction": "Translate this to a docker command: expose mysql on port 3306", "input": "", "output": "docker run -p 3306:3306 mysql"}
+{"instruction": "Translate this to a docker command: create bridge network frontend-net", "input": "", "output": "docker network create frontend-net"}
+{"instruction": "Translate this to a docker command: build frontend tagged 2.0", "input": "", "output": "docker build -t frontend:2.0 ."}
+{"instruction": "Translate this to a docker command: run nginx on port 8080 in background named web", "input": "", "output": "docker run -d -p 8080:80 --name web nginx"}
+{"instruction": "Translate this to a docker command: open shell in container nginx", "input": "", "output": "docker exec -it nginx bash"}
+{"instruction": "Translate this to a docker command: run sh in container web", "input": "", "output": "docker exec -it web sh"}
+{"instruction": "Translate this to a docker command: show details of volume app-data", "input": "", "output": "docker volume inspect app-data"}
+{"instruction": "Translate this to a docker command: run sh in container db", "input": "", "output": "docker exec -it db sh"}
+{"instruction": "Translate this to a docker command: rebuild services without cache", "input": "", "output": "docker-compose build --no-cache"}
+{"instruction": "Translate this to a docker command: display logs of web", "input": "", "output": "docker logs web"}
+{"instruction": "Translate this to a docker command: start mongo in detached mode", "input": "", "output": "docker run -d mongo"}
+{"instruction": "Translate this to a docker command: run redis on port 6379 detached named cache with volume", "input": "", "output": "docker run -d -p 6379:6379 --name cache -v redis-data:/data redis"}
+{"instruction": "Translate this to a docker command: scale web to 5", "input": "", "output": "docker-compose up -d --scale web=5"}
+{"instruction": "Translate this to a docker command: display logs of app", "input": "", "output": "docker logs app"}
+{"instruction": "Translate this to a docker command: rebuild compose services", "input": "", "output": "docker-compose build"}
+{"instruction": "Translate this to a docker command: inspect container nginx", "input": "", "output": "docker inspect nginx"}
+{"instruction": "Translate this to a docker command: run redis with restart on failure", "input": "", "output": "docker run --restart on-failure redis"}
+{"instruction": "Translate this to a docker command: show logs for container api", "input": "", "output": "docker logs api"}
+{"instruction": "Translate this to a docker command: show current directory in container nginx", "input": "", "output": "docker exec nginx pwd"}
+{"instruction": "Translate this to a docker command: show details of nginx", "input": "", "output": "docker inspect nginx"}
+{"instruction": "Translate this to a docker command: bring up compose in background", "input": "", "output": "docker-compose up -d"}
+{"instruction": "Translate this to a docker command: create nginx container called server", "input": "", "output": "docker run --name server nginx"}
+{"instruction": "Translate this to a docker command: mount volume $(pwd):/app in node", "input": "", "output": "docker run -v $(pwd):/app node"}
+{"instruction": "Translate this to a docker command: create volume postgres-data", "input": "", "output": "docker volume create postgres-data"}
+{"instruction": "Translate this to a docker command: build with dockerfile Dockerfile.staging", "input": "", "output": "docker build -f Dockerfile.staging ."}
+{"instruction": "Translate this to a docker command: list image ids", "input": "", "output": "docker images -q"}
+{"instruction": "Translate this to a docker command: start nginx in detached mode", "input": "", "output": "docker run -d nginx"}
+{"instruction": "Translate this to a docker command: mount volume db-vol:/var/lib/mysql in mysql", "input": "", "output": "docker run -v db-vol:/var/lib/mysql mysql"}
+{"instruction": "Translate this to a docker command: display disk usage", "input": "", "output": "docker system df"}
+{"instruction": "Translate this to a docker command: expose redis on port 6379", "input": "", "output": "docker run -p 6379:6379 redis"}
+{"instruction": "Translate this to a docker command: tail logs for api", "input": "", "output": "docker logs --tail 100 api"}
+{"instruction": "Translate this to a docker command: run node with volume ./app:/app", "input": "", "output": "docker run -v ./app:/app node"}
+{"instruction": "Translate this to a docker command: build image tagged api version latest", "input": "", "output": "docker build -t api:latest ."}
+{"instruction": "Translate this to a docker command: remove volume mysql-data", "input": "", "output": "docker volume rm mysql-data"}
+{"instruction": "Translate this to a docker command: show compose status", "input": "", "output": "docker-compose ps"}
+{"instruction": "Translate this to a docker command: follow logs of container web", "input": "", "output": "docker logs -f web"}
+{"instruction": "Translate this to a docker command: list all images", "input": "", "output": "docker images -a"}
+{"instruction": "Translate this to a docker command: run ubuntu interactively", "input": "", "output": "docker run -it ubuntu bash"}
+{"instruction": "Translate this to a docker command: temporary python container", "input": "", "output": "docker run --rm python"}
+{"instruction": "Translate this to a docker command: run nginx with volume web-data:/usr/share/nginx/html", "input": "", "output": "docker run -v web-data:/usr/share/nginx/html nginx"}
+{"instruction": "Translate this to a docker command: execute bash in nginx", "input": "", "output": "docker exec -it nginx bash"}
+{"instruction": "Translate this to a docker command: run python detached", "input": "", "output": "docker run -d python"}
+{"instruction": "Translate this to a docker command: prune docker system", "input": "", "output": "docker system prune"}
+{"instruction": "Translate this to a docker command: execute sh in api", "input": "", "output": "docker exec -it api sh"}
+{"instruction": "Translate this to a docker command: execute bash in app", "input": "", "output": "docker exec -it app bash"}
+{"instruction": "Translate this to a docker command: run mysql with password secret", "input": "", "output": "docker run -e MYSQL_ROOT_PASSWORD=secret mysql"}
+{"instruction": "Translate this to a docker command: run postgres named db", "input": "", "output": "docker run --name db postgres"}
+{"instruction": "Translate this to a docker command: scale api to 5", "input": "", "output": "docker-compose up -d --scale api=5"}
+{"instruction": "Translate this to a docker command: inspect container backend", "input": "", "output": "docker inspect backend"}
+{"instruction": "Translate this to a docker command: remove all stopped containers", "input": "", "output": "docker rm $(docker ps -a -q)"}
+{"instruction": "Translate this to a docker command: check disk usage in container nginx", "input": "", "output": "docker exec nginx df -h"}
+{"instruction": "Translate this to a docker command: build using Dockerfile.dev", "input": "", "output": "docker build -f Dockerfile.dev ."}
+{"instruction": "Translate this to a docker command: map port 5432 to 5432 for postgres", "input": "", "output": "docker run -p 5432:5432 postgres"}
+{"instruction": "Translate this to a docker command: build myapp without cache", "input": "", "output": "docker build --no-cache -t myapp ."}
+{"instruction": "Translate this to a docker command: remove unused volumes", "input": "", "output": "docker volume prune"}
+{"instruction": "Translate this to a docker command: open shell in container nginx", "input": "", "output": "docker exec -it nginx sh"}
+{"instruction": "Translate this to a docker command: run node with volume $(pwd):/app", "input": "", "output": "docker run -v $(pwd):/app node"}
+{"instruction": "Translate this to a docker command: build with build arg NODE_ENV=staging", "input": "", "output": "docker build --build-arg NODE_ENV=staging ."}
+{"instruction": "Translate this to a docker command: open shell in container app", "input": "", "output": "docker exec -it app sh"}
+{"instruction": "Translate this to a docker command: start mysql container named db", "input": "", "output": "docker run --name db mysql"}
+{"instruction": "Translate this to a docker command: scale api to 3", "input": "", "output": "docker-compose up -d --scale api=3"}
+{"instruction": "Translate this to a docker command: display all containers", "input": "", "output": "docker ps -a"}
+{"instruction": "Translate this to a docker command: display docker info", "input": "", "output": "docker info"}
+{"instruction": "Translate this to a docker command: clean up everything", "input": "", "output": "docker system prune -a"}
+{"instruction": "Translate this to a docker command: run nginx on port 9000", "input": "", "output": "docker run -p 9000:80 nginx"}
+{"instruction": "Translate this to a docker command: rebuild api from scratch", "input": "", "output": "docker build --no-cache -t api ."}
+{"instruction": "Translate this to a docker command: run redis on port 6380", "input": "", "output": "docker run -p 6380:6379 redis"}
+{"instruction": "Translate this to a docker command: run node with NODE_ENV development", "input": "", "output": "docker run -e NODE_ENV=development node"}
+{"instruction": "Translate this to a docker command: build and tag as webapp latest", "input": "", "output": "docker build -t webapp:latest ."}
+{"instruction": "Translate this to a docker command: run mysql with volume db-vol:/var/lib/mysql", "input": "", "output": "docker run -v db-vol:/var/lib/mysql mysql"}
+{"instruction": "Translate this to a docker command: update compose images", "input": "", "output": "docker-compose pull"}
+{"instruction": "Translate this to a docker command: clean up networks", "input": "", "output": "docker network prune"}
+{"instruction": "Translate this to a docker command: make network mynet", "input": "", "output": "docker network create mynet"}
+{"instruction": "Translate this to a docker command: show logs for container backend", "input": "", "output": "docker logs backend"}
+{"instruction": "Translate this to a docker command: build and tag as api 1.0", "input": "", "output": "docker build -t api:1.0 ."}
+{"instruction": "Translate this to a docker command: map port 8080 to 3000 for node", "input": "", "output": "docker run -p 8080:3000 node"}
+{"instruction": "Translate this to a docker command: run postgres on port 5432 with password secret in background", "input": "", "output": "docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=secret postgres"}
+{"instruction": "Translate this to a docker command: inspect volume app-data", "input": "", "output": "docker volume inspect app-data"}
+{"instruction": "Translate this to a docker command: run redis named cache", "input": "", "output": "docker run --name cache redis"}
+{"instruction": "Translate this to a docker command: create mongo container called mongo-db", "input": "", "output": "docker run --name mongo-db mongo"}
+{"instruction": "Translate this to a docker command: build with build arg VERSION=1.0", "input": "", "output": "docker build --build-arg VERSION=1.0 ."}
+{"instruction": "Translate this to a docker command: create redis container called session-store", "input": "", "output": "docker run --name session-store redis"}
+{"instruction": "Translate this to a docker command: mount volume /data/mongo:/data/db in mongo", "input": "", "output": "docker run -v /data/mongo:/data/db mongo"}
+{"instruction": "Translate this to a docker command: build webapp version 1 using dev dockerfile", "input": "", "output": "docker build -f Dockerfile.dev -t webapp:1.0 ."}
+{"instruction": "Translate this to a docker command: start services in background", "input": "", "output": "docker-compose up -d"}
+{"instruction": "Translate this to a docker command: spin up alpine", "input": "", "output": "docker run alpine"}
+{"instruction": "Translate this to a docker command: prune images", "input": "", "output": "docker image prune"}
+{"instruction": "Translate this to a docker command: start redis container named redis-cache", "input": "", "output": "docker run --name redis-cache redis"}
+{"instruction": "Translate this to a docker command: run redis with password mypass", "input": "", "output": "docker run -e REDIS_PASSWORD=mypass redis"}
+{"instruction": "Translate this to a docker command: start mysql in detached mode", "input": "", "output": "docker run -d mysql"}
+{"instruction": "Translate this to a docker command: start mongo container named mongodb", "input": "", "output": "docker run --name mongodb mongo"}
+{"instruction": "Translate this to a docker command: list files in /var/log of api", "input": "", "output": "docker exec -w /var/log api ls"}
+{"instruction": "Translate this to a docker command: build and tag as myapp 2.0", "input": "", "output": "docker build -t myapp:2.0 ."}
+{"instruction": "Translate this to a docker command: inspect volume mydata", "input": "", "output": "docker volume inspect mydata"}
+{"instruction": "Translate this to a docker command: run node on port 3000", "input": "", "output": "docker run -p 3000:3000 node"}
+{"instruction": "Translate this to a docker command: start mysql", "input": "", "output": "docker run mysql"}
+{"instruction": "Translate this to a docker command: create bridge network backend-net", "input": "", "output": "docker network create backend-net"}
+{"instruction": "Translate this to a docker command: stop docker compose", "input": "", "output": "docker-compose down"}
+{"instruction": "Translate this to a docker command: show details of volume postgres-data", "input": "", "output": "docker volume inspect postgres-data"}
+{"instruction": "Translate this to a docker command: show logs for container db", "input": "", "output": "docker logs db"}
+{"instruction": "Translate this to a docker command: build compose services", "input": "", "output": "docker-compose build"}
+{"instruction": "Translate this to a docker command: display networks", "input": "", "output": "docker network ls"}
+{"instruction": "Translate this to a docker command: display docker version", "input": "", "output": "docker version"}
+{"instruction": "Translate this to a docker command: run postgres on bridge network", "input": "", "output": "docker run --network bridge postgres"}
+{"instruction": "Translate this to a docker command: scale worker to 5", "input": "", "output": "docker-compose up -d --scale worker=5"}
+{"instruction": "Translate this to a docker command: run node with volume app-data:/app", "input": "", "output": "docker run -v app-data:/app node"}
+{"instruction": "Translate this to a docker command: map port 5433 to 5432 for postgres", "input": "", "output": "docker run -p 5433:5432 postgres"}
+{"instruction": "Translate this to a docker command: inspect container api", "input": "", "output": "docker inspect api"}
+{"instruction": "Translate this to a docker command: execute sh in backend", "input": "", "output": "docker exec -it backend sh"}
+{"instruction": "Translate this to a docker command: start compose in detached mode", "input": "", "output": "docker-compose up -d"}
+{"instruction": "Translate this to a docker command: show details of backend", "input": "", "output": "docker inspect backend"}
+{"instruction": "Translate this to a docker command: create nginx container called web", "input": "", "output": "docker run --name web nginx"}
+{"instruction": "Translate this to a docker command: scale web to 2", "input": "", "output": "docker-compose up -d --scale web=2"}
+{"instruction": "Translate this to a docker command: display logs of db", "input": "", "output": "docker logs db"}
+{"instruction": "Translate this to a docker command: scale api service to 5 instances", "input": "", "output": "docker-compose up -d --scale api=5"}
+{"instruction": "Translate this to a docker command: build and tag as myapp latest", "input": "", "output": "docker build -t myapp:latest ."}
+{"instruction": "Translate this to a docker command: run bash in container db", "input": "", "output": "docker exec -it db bash"}
+{"instruction": "Translate this to a docker command: make volume mydata", "input": "", "output": "docker volume create mydata"}
+{"instruction": "Translate this to a docker command: build image tagged backend version latest", "input": "", "output": "docker build -t backend:latest ."}
+{"instruction": "Translate this to a docker command: expose nginx on port 3000", "input": "", "output": "docker run -p 3000:80 nginx"}
+{"instruction": "Translate this to a docker command: run postgres on port 5432", "input": "", "output": "docker run -p 5432:5432 postgres"}
+{"instruction": "Translate this to a docker command: show processes in container nginx", "input": "", "output": "docker top nginx"}
+{"instruction": "Translate this to a docker command: prune docker volumes", "input": "", "output": "docker volume prune"}
+{"instruction": "Translate this to a docker command: run mongo with volume /data/mongo:/data/db", "input": "", "output": "docker run -v /data/mongo:/data/db mongo"}
+{"instruction": "Translate this to a docker command: build api tagged latest", "input": "", "output": "docker build -t api:latest ."}
+{"instruction": "Translate this to a docker command: connect container app to network appnet", "input": "", "output": "docker network connect appnet app"}
+{"instruction": "Translate this to a docker command: show docker info", "input": "", "output": "docker info"}
+{"instruction": "Translate this to a docker command: set NODE_ENV to production in node", "input": "", "output": "docker run -e NODE_ENV=production node"}
+{"instruction": "Translate this to a docker command: restart compose services", "input": "", "output": "docker-compose restart"}
+{"instruction": "Translate this to a docker command: execute sh in app", "input": "", "output": "docker exec -it app sh"}
+{"instruction": "Translate this to a docker command: show latest container", "input": "", "output": "docker ps -l"}
+{"instruction": "Translate this to a docker command: show logs for db service", "input": "", "output": "docker-compose logs db"}
+{"instruction": "Translate this to a docker command: remove network mynet", "input": "", "output": "docker network rm mynet"}
+{"instruction": "Translate this to a docker command: run mysql on port 3307", "input": "", "output": "docker run -p 3307:3306 mysql"}
+{"instruction": "Translate this to a docker command: build frontend tagged 1.0", "input": "", "output": "docker build -t frontend:1.0 ."}
+{"instruction": "Translate this to a docker command: make volume db-vol", "input": "", "output": "docker volume create db-vol"}
+{"instruction": "Translate this to a docker command: build services", "input": "", "output": "docker-compose build"}
+{"instruction": "Translate this to a docker command: delete unused volumes", "input": "", "output": "docker volume prune"}
+{"instruction": "Translate this to a docker command: build with dockerfile Dockerfile.test", "input": "", "output": "docker build -f Dockerfile.test ."}
+{"instruction": "Translate this to a docker command: bring up compose", "input": "", "output": "docker-compose up"}
+{"instruction": "Translate this to a docker command: run nginx with volume /data:/usr/share/nginx/html", "input": "", "output": "docker run -v /data:/usr/share/nginx/html nginx"}
+{"instruction": "Translate this to a docker command: list docker networks", "input": "", "output": "docker network ls"}
+{"instruction": "Translate this to a docker command: expose node on port 8080", "input": "", "output": "docker run -p 8080:3000 node"}
+{"instruction": "Translate this to a docker command: run node named api", "input": "", "output": "docker run --name api node"}
+{"instruction": "Translate this to a docker command: start a python container", "input": "", "output": "docker run python"}
+{"instruction": "Translate this to a docker command: inspect volume mysql-data", "input": "", "output": "docker volume inspect mysql-data"}
+{"instruction": "Translate this to a docker command: scale worker service to 2 instances", "input": "", "output": "docker-compose up -d --scale worker=2"}
+{"instruction": "Translate this to a docker command: show details of db", "input": "", "output": "docker inspect db"}
+{"instruction": "Translate this to a docker command: create docker volume cache-vol", "input": "", "output": "docker volume create cache-vol"}
+{"instruction": "Translate this to a docker command: map port 6379 to 6379 for redis", "input": "", "output": "docker run -p 6379:6379 redis"}
+{"instruction": "Translate this to a docker command: build service tagged latest", "input": "", "output": "docker build -t service:latest ."}
+{"instruction": "Translate this to a docker command: build with build arg VERSION=3.0", "input": "", "output": "docker build --build-arg VERSION=3.0 ."}
+{"instruction": "Translate this to a docker command: open shell in container api", "input": "", "output": "docker exec -it api bash"}
+{"instruction": "Translate this to a docker command: mount volume mysql-data:/var/lib/mysql in mysql", "input": "", "output": "docker run -v mysql-data:/var/lib/mysql mysql"}
+{"instruction": "Translate this to a docker command: run ls in /app directory of container api", "input": "", "output": "docker exec -w /app api ls"}
+{"instruction": "Translate this to a docker command: attach web to appnet", "input": "", "output": "docker network connect appnet web"}
+{"instruction": "Translate this to a docker command: run postgres detached", "input": "", "output": "docker run -d postgres"}
+{"instruction": "Translate this to a docker command: map port 8080 to 80 for nginx", "input": "", "output": "docker run -p 8080:80 nginx"}
+{"instruction": "Translate this to a docker command: rebuild webapp from scratch", "input": "", "output": "docker build --no-cache -t webapp ."}
+{"instruction": "Translate this to a docker command: start mysql with env MYSQL_ROOT_PASSWORD set to secret", "input": "", "output": "docker run -e MYSQL_ROOT_PASSWORD=secret mysql"}
+{"instruction": "Translate this to a docker command: map port 27018 to 27017 for mongo", "input": "", "output": "docker run -p 27018:27017 mongo"}
+{"instruction": "Translate this to a docker command: create redis container called redis-cache", "input": "", "output": "docker run --name redis-cache redis"}
+{"instruction": "Translate this to a docker command: restart all services", "input": "", "output": "docker-compose restart"}
+{"instruction": "Translate this to a docker command: run mysql with password admin", "input": "", "output": "docker run -e MYSQL_ROOT_PASSWORD=admin mysql"}
+{"instruction": "Translate this to a docker command: delete all stopped containers", "input": "", "output": "docker rm $(docker ps -a -q)"}
+{"instruction": "Translate this to a docker command: run bash in container web", "input": "", "output": "docker exec -it web bash"}
+{"instruction": "Translate this to a docker command: build with arg ENV set to prod", "input": "", "output": "docker build --build-arg ENV=prod ."}
+{"instruction": "Translate this to a docker command: build and tag as backend 2.0", "input": "", "output": "docker build -t backend:2.0 ."}
+{"instruction": "Translate this to a docker command: detach api from appnet", "input": "", "output": "docker network disconnect appnet api"}
+{"instruction": "Translate this to a docker command: execute bash in web", "input": "", "output": "docker-compose exec web bash"}
+{"instruction": "Translate this to a docker command: follow logs of container db", "input": "", "output": "docker logs -f db"}
+{"instruction": "Translate this to a docker command: run bash in api service", "input": "", "output": "docker-compose exec api bash"}
+{"instruction": "Translate this to a docker command: run redis detached", "input": "", "output": "docker run -d redis"}
+{"instruction": "Translate this to a docker command: show image ids only", "input": "", "output": "docker images -q"}
+{"instruction": "Translate this to a docker command: build and tag as service 2.0", "input": "", "output": "docker build -t service:2.0 ."}
+{"instruction": "Translate this to a docker command: execute bash in db", "input": "", "output": "docker-compose exec db bash"}
+{"instruction": "Translate this to a docker command: expose postgres on port 5433", "input": "", "output": "docker run -p 5433:5432 postgres"}
+{"instruction": "Translate this to a docker command: check docker disk usage", "input": "", "output": "docker system df"}
+{"instruction": "Translate this to a docker command: mount volume web-data:/usr/share/nginx/html in nginx", "input": "", "output": "docker run -v web-data:/usr/share/nginx/html nginx"}
+{"instruction": "Translate this to a docker command: disconnect container db from network mynet", "input": "", "output": "docker network disconnect mynet db"}
+{"instruction": "Translate this to a docker command: connect container api to network mynet", "input": "", "output": "docker network connect mynet api"}
+{"instruction": "Translate this to a docker command: run mongo in background", "input": "", "output": "docker run -d mongo"}
+{"instruction": "Translate this to a docker command: check disk usage in container web", "input": "", "output": "docker exec web df -h"}
+{"instruction": "Translate this to a docker command: create bridge network appnet", "input": "", "output": "docker network create appnet"}
+{"instruction": "Translate this to a docker command: start redis with env REDIS_PASSWORD set to mypass", "input": "", "output": "docker run -e REDIS_PASSWORD=mypass redis"}
+{"instruction": "Translate this to a docker command: launch alpine", "input": "", "output": "docker run alpine"}
+{"instruction": "Translate this to a docker command: run alpine and auto cleanup", "input": "", "output": "docker run --rm alpine"}
+{"instruction": "Translate this to a docker command: create mongo container called mongodb", "input": "", "output": "docker run --name mongodb mongo"}
+{"instruction": "Translate this to a docker command: run postgres named main-db", "input": "", "output": "docker run --name main-db postgres"}
+{"instruction": "Translate this to a docker command: create mysql container called database", "input": "", "output": "docker run --name database mysql"}
+{"instruction": "Translate this to a docker command: show all images", "input": "", "output": "docker images -a"}
+{"instruction": "Translate this to a docker command: list files in container nginx", "input": "", "output": "docker exec nginx ls"}
+{"instruction": "Translate this to a docker command: show logs for api service", "input": "", "output": "docker-compose logs api"}
+{"instruction": "Translate this to a docker command: show all volumes", "input": "", "output": "docker volume ls"}
+{"instruction": "Translate this to a docker command: show docker version", "input": "", "output": "docker version"}
+{"instruction": "Translate this to a docker command: list files in container db", "input": "", "output": "docker exec db ls"}
+{"instruction": "Translate this to a docker command: build webapp without cache", "input": "", "output": "docker build --no-cache -t webapp ."}
+{"instruction": "Translate this to a docker command: mount volume db-data:/var/lib/postgresql/data in postgres", "input": "", "output": "docker run -v db-data:/var/lib/postgresql/data postgres"}
+{"instruction": "Translate this to a docker command: build with dockerfile Dockerfile.prod", "input": "", "output": "docker build -f Dockerfile.prod ."}
+{"instruction": "Translate this to a docker command: detach app from appnet", "input": "", "output": "docker network disconnect appnet app"}
+{"instruction": "Translate this to a docker command: connect container web to network appnet", "input": "", "output": "docker network connect appnet web"}
+{"instruction": "Translate this to a docker command: map port 8000 to 3000 for node", "input": "", "output": "docker run -p 8000:3000 node"}
+{"instruction": "Translate this to a docker command: show docker information", "input": "", "output": "docker info"}
+{"instruction": "Translate this to a docker command: expose redis on port 6380", "input": "", "output": "docker run -p 6380:6379 redis"}
+{"instruction": "Translate this to a docker command: mount volume /data:/usr/share/nginx/html in nginx", "input": "", "output": "docker run -v /data:/usr/share/nginx/html nginx"}
+{"instruction": "Translate this to a docker command: tail logs for backend", "input": "", "output": "docker logs --tail 100 backend"}
+{"instruction": "Translate this to a docker command: execute bash in web", "input": "", "output": "docker exec -it web bash"}
+{"instruction": "Translate this to a docker command: show details of app", "input": "", "output": "docker inspect app"}
+{"instruction": "Translate this to a docker command: show logs for web service", "input": "", "output": "docker-compose logs web"}
+{"instruction": "Translate this to a docker command: build with build arg VERSION=2.0", "input": "", "output": "docker build --build-arg VERSION=2.0 ."}
+{"instruction": "Translate this to a docker command: follow logs of web", "input": "", "output": "docker-compose logs -f web"}
+{"instruction": "Translate this to a docker command: tail compose logs", "input": "", "output": "docker-compose logs -f"}
+{"instruction": "Translate this to a docker command: build image tagged webapp version 1.0", "input": "", "output": "docker build -t webapp:1.0 ."}
+{"instruction": "Translate this to a docker command: expose postgres on port 5432", "input": "", "output": "docker run -p 5432:5432 postgres"}
+{"instruction": "Translate this to a docker command: map port 3000 to 3000 for node", "input": "", "output": "docker run -p 3000:3000 node"}
+{"instruction": "Translate this to a docker command: run mongo named nosql-db", "input": "", "output": "docker run --name nosql-db mongo"}
+{"instruction": "Translate this to a docker command: display compose logs", "input": "", "output": "docker-compose logs"}
+{"instruction": "Translate this to a docker command: show container stats", "input": "", "output": "docker stats"}
+{"instruction": "Translate this to a docker command: start mysql container named database", "input": "", "output": "docker run --name database mysql"}
+{"instruction": "Translate this to a docker command: build backend tagged 1.0", "input": "", "output": "docker build -t backend:1.0 ."}
+{"instruction": "Translate this to a docker command: build with build arg ENV=dev", "input": "", "output": "docker build --build-arg ENV=dev ."}
+{"instruction": "Translate this to a docker command: start node container named app", "input": "", "output": "docker run --name app node"}
+{"instruction": "Translate this to a docker command: show current directory in container db", "input": "", "output": "docker exec db pwd"}
+{"instruction": "Translate this to a docker command: run sh in container nginx", "input": "", "output": "docker exec -it nginx sh"}
+{"instruction": "Translate this to a docker command: clean up volumes", "input": "", "output": "docker volume prune"}
+{"instruction": "Translate this to a docker command: build and tag as frontend 2.0", "input": "", "output": "docker build -t frontend:2.0 ."}
+{"instruction": "Translate this to a docker command: run node in background", "input": "", "output": "docker run -d node"}
+{"instruction": "Translate this to a docker command: stop all running containers", "input": "", "output": "docker stop $(docker ps -q)"}
+{"instruction": "Translate this to a docker command: build image tagged backend version 1.0", "input": "", "output": "docker build -t backend:1.0 ."}
+{"instruction": "Translate this to a docker command: build with arg ENV set to test", "input": "", "output": "docker build --build-arg ENV=test ."}
+{"instruction": "Translate this to a docker command: display volumes", "input": "", "output": "docker volume ls"}
+{"instruction": "Translate this to a docker command: build with build arg NODE_ENV=production", "input": "", "output": "docker build --build-arg NODE_ENV=production ."}
+{"instruction": "Translate this to a docker command: mount volume app-data:/app in node", "input": "", "output": "docker run -v app-data:/app node"}
+{"instruction": "Translate this to a docker command: start postgres container named db", "input": "", "output": "docker run --name db postgres"}
+{"instruction": "Translate this to a docker command: open bash in alpine", "input": "", "output": "docker run -it alpine sh"}
+{"instruction": "Translate this to a docker command: build image from current directory", "input": "", "output": "docker build ."}
+{"instruction": "Translate this to a docker command: show logs for container app", "input": "", "output": "docker logs app"}
+{"instruction": "Translate this to a docker command: start node container named web-app", "input": "", "output": "docker run --name web-app node"}
+{"instruction": "Translate this to a docker command: list containers with size", "input": "", "output": "docker ps -s"}
+{"instruction": "Translate this to a docker command: build with build arg ENV=test", "input": "", "output": "docker build --build-arg ENV=test ."}
+{"instruction": "Translate this to a docker command: build and tag as api latest", "input": "", "output": "docker build -t api:latest ."}
+{"instruction": "Translate this to a docker command: remove all unused data", "input": "", "output": "docker system prune -a"}
+{"instruction": "Translate this to a docker command: open shell in container web", "input": "", "output": "docker exec -it web bash"}
+{"instruction": "Translate this to a docker command: run bash in web service", "input": "", "output": "docker-compose exec web bash"}
+{"instruction": "Translate this to a docker command: build and tag as backend latest", "input": "", "output": "docker build -t backend:latest ."}
+{"instruction": "Translate this to a docker command: execute bash in worker", "input": "", "output": "docker-compose exec worker bash"}
+{"instruction": "Translate this to a docker command: run redis named redis-cache", "input": "", "output": "docker run --name redis-cache redis"}
+{"instruction": "Translate this to a docker command: run node with NODE_ENV production", "input": "", "output": "docker run -e NODE_ENV=production node"}
+{"instruction": "Translate this to a docker command: list files in /var/log of db", "input": "", "output": "docker exec -w /var/log db ls"}
+{"instruction": "Translate this to a docker command: show details of web", "input": "", "output": "docker inspect web"}
+{"instruction": "Translate this to a docker command: build and tag as webapp 2.0", "input": "", "output": "docker build -t webapp:2.0 ."}
+{"instruction": "Translate this to a docker command: show compose logs", "input": "", "output": "docker-compose logs"}
+{"instruction": "Translate this to a docker command: start node container named backend", "input": "", "output": "docker run --name backend node"}
+{"instruction": "Translate this to a docker command: build myapp tagged latest", "input": "", "output": "docker build -t myapp:latest ."}
+{"instruction": "Translate this to a docker command: scale web to 3", "input": "", "output": "docker-compose up -d --scale web=3"}
+{"instruction": "Translate this to a docker command: run bash in db service", "input": "", "output": "docker-compose exec db bash"}
+{"instruction": "Translate this to a docker command: run node app on port 3000 with env production mounting current dir", "input": "", "output": "docker run -d -p 3000:3000 -e NODE_ENV=production -v $(pwd):/app node"}
+{"instruction": "Translate this to a docker command: attach db to appnet", "input": "", "output": "docker network connect appnet db"}
+{"instruction": "Translate this to a docker command: run postgres with volume db-data:/var/lib/postgresql/data", "input": "", "output": "docker run -v db-data:/var/lib/postgresql/data postgres"}
+{"instruction": "Translate this to a docker command: build image tagged service version latest", "input": "", "output": "docker build -t service:latest ."}
+{"instruction": "Translate this to a docker command: make volume app-data", "input": "", "output": "docker volume create app-data"}
+{"instruction": "Translate this to a docker command: create volume mysql-data", "input": "", "output": "docker volume create mysql-data"}
+{"instruction": "Translate this to a docker command: build api tagged 1.0", "input": "", "output": "docker build -t api:1.0 ."}
+{"instruction": "Translate this to a docker command: run nginx in background", "input": "", "output": "docker run -d nginx"}
+{"instruction": "Translate this to a docker command: build image tagged frontend version 1.0", "input": "", "output": "docker build -t frontend:1.0 ."}
+{"instruction": "Translate this to a docker command: create network frontend-net", "input": "", "output": "docker network create frontend-net"}
+{"instruction": "Translate this to a docker command: list docker volumes", "input": "", "output": "docker volume ls"}
+{"instruction": "Translate this to a docker command: create postgres container called main-db", "input": "", "output": "docker run --name main-db postgres"}
+{"instruction": "Translate this to a docker command: run mongo on port 27017", "input": "", "output": "docker run -p 27017:27017 mongo"}
+{"instruction": "Translate this to a docker command: start nginx container named frontend", "input": "", "output": "docker run --name frontend nginx"}
+{"instruction": "Translate this to a docker command: stop compose services", "input": "", "output": "docker-compose stop"}
+{"instruction": "Translate this to a docker command: build image tagged webapp version 2.0", "input": "", "output": "docker build -t webapp:2.0 ."}
+{"instruction": "Translate this to a docker command: map port 27017 to 27017 for mongo", "input": "", "output": "docker run -p 27017:27017 mongo"}
+{"instruction": "Translate this to a docker command: stop all containers", "input": "", "output": "docker stop $(docker ps -q)"}
+{"instruction": "Translate this to a docker command: start mongo container named mongo-db", "input": "", "output": "docker run --name mongo-db mongo"}
+{"instruction": "Translate this to a docker command: bring down compose", "input": "", "output": "docker-compose down"}
+{"instruction": "Translate this to a docker command: halt all running containers", "input": "", "output": "docker stop $(docker ps -q)"}
+{"instruction": "Translate this to a docker command: create volume db-vol", "input": "", "output": "docker volume create db-vol"}
+{"instruction": "Translate this to a docker command: build and tag as service latest", "input": "", "output": "docker build -t service:latest ."}
+{"instruction": "Translate this to a docker command: make network db-net", "input": "", "output": "docker network create db-net"}
+{"instruction": "Translate this to a docker command: run node detached", "input": "", "output": "docker run -d node"}
+{"instruction": "Translate this to a docker command: run nginx named frontend", "input": "", "output": "docker run --name frontend nginx"}
+{"instruction": "Translate this to a docker command: run node on port 8080", "input": "", "output": "docker run -p 8080:3000 node"}
+{"instruction": "Translate this to a docker command: display docker images", "input": "", "output": "docker images"}
+{"instruction": "Translate this to a docker command: build service tagged 1.0", "input": "", "output": "docker build -t service:1.0 ."}
+{"instruction": "Translate this to a docker command: attach db to mynet", "input": "", "output": "docker network connect mynet db"}
+{"instruction": "Translate this to a docker command: open shell in container web", "input": "", "output": "docker exec -it web sh"}
+{"instruction": "Translate this to a docker command: build image tagged myapp version 1.0", "input": "", "output": "docker build -t myapp:1.0 ."}
+{"instruction": "Translate this to a docker command: create postgres container called postgres-db", "input": "", "output": "docker run --name postgres-db postgres"}
+{"instruction": "Translate this to a docker command: execute sh in web", "input": "", "output": "docker exec -it web sh"}
+{"instruction": "Translate this to a docker command: run mysql detached", "input": "", "output": "docker run -d mysql"}
+{"instruction": "Translate this to a docker command: inspect network backend-net", "input": "", "output": "docker network inspect backend-net"}
+{"instruction": "Translate this to a docker command: run postgres with volume /app/data:/var/lib/postgresql/data", "input": "", "output": "docker run -v /app/data:/var/lib/postgresql/data postgres"}
+{"instruction": "Translate this to a docker command: connect container db to network appnet", "input": "", "output": "docker network connect appnet db"}
+{"instruction": "Translate this to a docker command: run ls in /app directory of container db", "input": "", "output": "docker exec -w /app db ls"}
+{"instruction": "Translate this to a docker command: clean up images", "input": "", "output": "docker image prune"}
+{"instruction": "Translate this to a docker command: create nginx container called frontend", "input": "", "output": "docker run --name frontend nginx"}
+{"instruction": "Translate this to a docker command: build from Dockerfile.dev", "input": "", "output": "docker build -f Dockerfile.dev ."}
+{"instruction": "Translate this to a docker command: remove stopped containers", "input": "", "output": "docker container prune"}
+{"instruction": "Translate this to a docker command: check disk usage in container api", "input": "", "output": "docker exec api df -h"}
+{"instruction": "Translate this to a docker command: build backend tagged latest", "input": "", "output": "docker build -t backend:latest ."}
+{"instruction": "Translate this to a docker command: build and tag as frontend latest", "input": "", "output": "docker build -t frontend:latest ."}
+{"instruction": "Translate this to a docker command: attach app to appnet", "input": "", "output": "docker network connect appnet app"}
+{"instruction": "Translate this to a docker command: map port 3000 to 80 for nginx", "input": "", "output": "docker run -p 3000:80 nginx"}
+{"instruction": "Translate this to a docker command: inspect container db", "input": "", "output": "docker inspect db"}
+{"instruction": "Translate this to a docker command: delete network appnet", "input": "", "output": "docker network rm appnet"}
+{"instruction": "Translate this to a docker command: run postgres with volume postgres-data:/var/lib/postgresql/data", "input": "", "output": "docker run -v postgres-data:/var/lib/postgresql/data postgres"}
+{"instruction": "Translate this to a docker command: build with arg VERSION set to 3.0", "input": "", "output": "docker build --build-arg VERSION=3.0 ."}
+{"instruction": "Translate this to a docker command: inspect network mynet", "input": "", "output": "docker network inspect mynet"}
+{"instruction": "Translate this to a docker command: start node in detached mode", "input": "", "output": "docker run -d node"}
+{"instruction": "Translate this to a docker command: follow logs of redis", "input": "", "output": "docker-compose logs -f redis"}
+{"instruction": "Translate this to a docker command: run bash in redis service", "input": "", "output": "docker-compose exec redis bash"}
+{"instruction": "Translate this to a docker command: tail logs for web", "input": "", "output": "docker logs --tail 100 web"}
+{"instruction": "Translate this to a docker command: run postgres with password admin", "input": "", "output": "docker run -e POSTGRES_PASSWORD=admin postgres"}
+{"instruction": "Translate this to a docker command: make network backend-net", "input": "", "output": "docker network create backend-net"}
+{"instruction": "Translate this to a docker command: open shell in container api", "input": "", "output": "docker exec -it api sh"}
+{"instruction": "Translate this to a docker command: show details of api", "input": "", "output": "docker inspect api"}
+{"instruction": "Translate this to a docker command: build backend tagged 2.0", "input": "", "output": "docker build -t backend:2.0 ."}
+{"instruction": "Translate this to a docker command: create docker volume mydata", "input": "", "output": "docker volume create mydata"}
+{"instruction": "Translate this to a docker command: run postgres in background", "input": "", "output": "docker run -d postgres"}
+{"instruction": "Translate this to a docker command: check docker version", "input": "", "output": "docker version"}
+{"instruction": "Translate this to a docker command: follow logs of container api", "input": "", "output": "docker logs -f api"}
+{"instruction": "Translate this to a docker command: build myapp tagged 1.0", "input": "", "output": "docker build -t myapp:1.0 ."}
+{"instruction": "Translate this to a docker command: map port 3306 to 3306 for mysql", "input": "", "output": "docker run -p 3306:3306 mysql"}
+{"instruction": "Translate this to a docker command: build and tag as service 1.0", "input": "", "output": "docker build -t service:1.0 ."}
+{"instruction": "Translate this to a docker command: detach web from appnet", "input": "", "output": "docker network disconnect appnet web"}
+{"instruction": "Translate this to a docker command: create node container called app", "input": "", "output": "docker run --name app node"}
+{"instruction": "Translate this to a docker command: build from Dockerfile.test", "input": "", "output": "docker build -f Dockerfile.test ."}
+{"instruction": "Translate this to a docker command: start mysql with env MYSQL_ROOT_PASSWORD set to password", "input": "", "output": "docker run -e MYSQL_ROOT_PASSWORD=password mysql"}
+{"instruction": "Translate this to a docker command: run bash in container nginx", "input": "", "output": "docker exec -it nginx bash"}
+{"instruction": "Translate this to a docker command: run postgres on port 5433", "input": "", "output": "docker run -p 5433:5432 postgres"}
+{"instruction": "Translate this to a docker command: show all containers", "input": "", "output": "docker ps -a"}
+{"instruction": "Translate this to a docker command: pull service images", "input": "", "output": "docker-compose pull"}
+{"instruction": "Translate this to a docker command: run postgres with password password123", "input": "", "output": "docker run -e POSTGRES_PASSWORD=password123 postgres"}
+{"instruction": "Translate this to a docker command: create docker volume postgres-data", "input": "", "output": "docker volume create postgres-data"}
+{"instruction": "Translate this to a docker command: make volume postgres-data", "input": "", "output": "docker volume create postgres-data"}
+{"instruction": "Translate this to a docker command: show logs for redis service", "input": "", "output": "docker-compose logs redis"}
+{"instruction": "Translate this to a docker command: follow logs of container backend", "input": "", "output": "docker logs -f backend"}
+{"instruction": "Translate this to a docker command: build compose without cache", "input": "", "output": "docker-compose build --no-cache"}
+{"instruction": "Translate this to a docker command: run redis", "input": "", "output": "docker run redis"}
+{"instruction": "Translate this to a docker command: show processes in container api", "input": "", "output": "docker top api"}
+{"instruction": "Translate this to a docker command: start busybox", "input": "", "output": "docker run busybox"}
+{"instruction": "Translate this to a docker command: build with dockerfile Dockerfile.dev", "input": "", "output": "docker build -f Dockerfile.dev ."}
+{"instruction": "Translate this to a docker command: follow logs of container nginx", "input": "", "output": "docker logs -f nginx"}
+{"instruction": "Translate this to a docker command: mount volume mongo-data:/data/db in mongo", "input": "", "output": "docker run -v mongo-data:/data/db mongo"}
+{"instruction": "Translate this to a docker command: check disk usage in container db", "input": "", "output": "docker exec db df -h"}
+{"instruction": "Translate this to a docker command: run node named app", "input": "", "output": "docker run --name app node"}
+{"instruction": "Translate this to a docker command: follow logs of api", "input": "", "output": "docker-compose logs -f api"}
+{"instruction": "Translate this to a docker command: tail logs for db", "input": "", "output": "docker logs --tail 100 db"}
+{"instruction": "Translate this to a docker command: scale web service to 3 instances", "input": "", "output": "docker-compose up -d --scale web=3"}
+{"instruction": "Translate this to a docker command: set NODE_ENV to development in node", "input": "", "output": "docker run -e NODE_ENV=development node"}
+{"instruction": "Translate this to a docker command: follow compose logs", "input": "", "output": "docker-compose logs -f"}
+{"instruction": "Translate this to a docker command: execute sh in db", "input": "", "output": "docker exec -it db sh"}
+{"instruction": "Translate this to a docker command: build using Dockerfile.prod", "input": "", "output": "docker build -f Dockerfile.prod ."}
+{"instruction": "Translate this to a docker command: build image tagged service version 1.0", "input": "", "output": "docker build -t service:1.0 ."}
+{"instruction": "Translate this to a docker command: tail logs for nginx", "input": "", "output": "docker logs --tail 100 nginx"}
+{"instruction": "Translate this to a docker command: build image tagged api version 2.0", "input": "", "output": "docker build -t api:2.0 ."}
+{"instruction": "Translate this to a docker command: remove volume postgres-data", "input": "", "output": "docker volume rm postgres-data"}
+{"instruction": "Translate this to a docker command: build webapp tagged 2.0", "input": "", "output": "docker build -t webapp:2.0 ."}
+{"instruction": "Translate this to a docker command: disconnect container api from network appnet", "input": "", "output": "docker network disconnect appnet api"}
+{"instruction": "Translate this to a docker command: build with arg NODE_ENV set to staging", "input": "", "output": "docker build --build-arg NODE_ENV=staging ."}
+{"instruction": "Translate this to a docker command: build docker image", "input": "", "output": "docker build ."}
+{"instruction": "Translate this to a docker command: create volume mydata", "input": "", "output": "docker volume create mydata"}
+{"instruction": "Translate this to a docker command: show current directory in container web", "input": "", "output": "docker exec web pwd"}
+{"instruction": "Translate this to a docker command: bring down compose and delete volumes", "input": "", "output": "docker-compose down -v"}
+{"instruction": "Translate this to a docker command: build image tagged myapp version latest", "input": "", "output": "docker build -t myapp:latest ."}
+{"instruction": "Translate this to a docker command: stop all services", "input": "", "output": "docker-compose stop"}
+{"instruction": "Translate this to a docker command: open shell in api", "input": "", "output": "docker-compose exec api sh"}
+{"instruction": "Translate this to a docker command: run bash in container backend", "input": "", "output": "docker exec -it backend bash"}
+{"instruction": "Translate this to a docker command: start mongo container named nosql-db", "input": "", "output": "docker run --name nosql-db mongo"}
+{"instruction": "Translate this to a docker command: show last 10 containers", "input": "", "output": "docker ps -n 10"}
+{"instruction": "Translate this to a docker command: open shell in container app", "input": "", "output": "docker exec -it app bash"}
+{"instruction": "Translate this to a docker command: run postgres with password mypassword", "input": "", "output": "docker run -e POSTGRES_PASSWORD=mypassword postgres"}
+{"instruction": "Translate this to a docker command: create volume app-data", "input": "", "output": "docker volume create app-data"}
+{"instruction": "Translate this to a docker command: build image tagged service version 2.0", "input": "", "output": "docker build -t service:2.0 ."}
+{"instruction": "Translate this to a docker command: execute bash in api", "input": "", "output": "docker exec -it api bash"}
+{"instruction": "Translate this to a docker command: display logs of api", "input": "", "output": "docker logs api"}
+{"instruction": "Translate this to a docker command: show images", "input": "", "output": "docker images"}
+{"instruction": "Translate this to a docker command: make network appnet", "input": "", "output": "docker network create appnet"}
+{"instruction": "Translate this to a docker command: open shell in container backend", "input": "", "output": "docker exec -it backend bash"}
+{"instruction": "Translate this to a docker command: open shell in worker", "input": "", "output": "docker-compose exec worker sh"}
+{"instruction": "Translate this to a docker command: scale api service to 2 instances", "input": "", "output": "docker-compose up -d --scale api=2"}
+{"instruction": "Translate this to a docker command: create node container called backend", "input": "", "output": "docker run --name backend node"}
+{"instruction": "Translate this to a docker command: execute bash in api", "input": "", "output": "docker-compose exec api bash"}
+{"instruction": "Translate this to a docker command: build image tagged myapp version 2.0", "input": "", "output": "docker build -t myapp:2.0 ."}
+{"instruction": "Translate this to a docker command: run python in background", "input": "", "output": "docker run -d python"}
+{"instruction": "Translate this to a docker command: pull compose images", "input": "", "output": "docker-compose pull"}
+{"instruction": "Translate this to a docker command: build image tagged frontend version 2.0", "input": "", "output": "docker build -t frontend:2.0 ."}
+{"instruction": "Translate this to a docker command: start postgres with env POSTGRES_PASSWORD set to mypassword", "input": "", "output": "docker run -e POSTGRES_PASSWORD=mypassword postgres"}
+{"instruction": "Translate this to a docker command: show processes in container web", "input": "", "output": "docker top web"}
+{"instruction": "Translate this to a docker command: run redis with password redispass", "input": "", "output": "docker run -e REDIS_PASSWORD=redispass redis"}
+{"instruction": "Translate this to a docker command: start nginx container named web", "input": "", "output": "docker run --name web nginx"}
+{"instruction": "Translate this to a docker command: run nginx", "input": "", "output": "docker run nginx"}
+{"instruction": "Translate this to a docker command: list compose services", "input": "", "output": "docker-compose ps"}
+{"instruction": "Translate this to a docker command: make volume cache-vol", "input": "", "output": "docker volume create cache-vol"}
+{"instruction": "Translate this to a docker command: run node on port 8000", "input": "", "output": "docker run -p 8000:3000 node"}
+{"instruction": "Translate this to a docker command: open shell in web", "input": "", "output": "docker-compose exec web sh"}
+{"instruction": "Translate this to a docker command: run mongo", "input": "", "output": "docker run mongo"}
+{"instruction": "Translate this to a docker command: build myapp tagged 2.0", "input": "", "output": "docker build -t myapp:2.0 ."}
+{"instruction": "Translate this to a docker command: run mongo named mongo-db", "input": "", "output": "docker run --name mongo-db mongo"}
+{"instruction": "Translate this to a docker command: build with arg ENV set to dev", "input": "", "output": "docker build --build-arg ENV=dev ."}
+{"instruction": "Translate this to a docker command: show details of volume mysql-data", "input": "", "output": "docker volume inspect mysql-data"}
+{"instruction": "Translate this to a docker command: run postgres named database", "input": "", "output": "docker run --name database postgres"}
+{"instruction": "Translate this to a docker command: open shell in container db", "input": "", "output": "docker exec -it db sh"}
+{"instruction": "Translate this to a docker command: run nginx named server", "input": "", "output": "docker run --name server nginx"}
+{"instruction": "Translate this to a docker command: display containers", "input": "", "output": "docker ps"}
+{"instruction": "Translate this to a docker command: run ubuntu and remove after exit", "input": "", "output": "docker run --rm ubuntu"}
+{"instruction": "Translate this to a docker command: create docker volume db-vol", "input": "", "output": "docker volume create db-vol"}
+{"instruction": "Translate this to a docker command: run mysql with volume mysql-data:/var/lib/mysql", "input": "", "output": "docker run -v mysql-data:/var/lib/mysql mysql"}
+{"instruction": "Translate this to a docker command: run sh in container api", "input": "", "output": "docker exec -it api sh"}
+{"instruction": "Translate this to a docker command: map port 3307 to 3306 for mysql", "input": "", "output": "docker run -p 3307:3306 mysql"}
+{"instruction": "Translate this to a docker command: create node container called api", "input": "", "output": "docker run --name api node"}
+{"instruction": "Translate this to a docker command: create mysql container called mysql-db", "input": "", "output": "docker run --name mysql-db mysql"}
+{"instruction": "Translate this to a docker command: create mysql container called db", "input": "", "output": "docker run --name db mysql"}
+{"instruction": "Translate this to a docker command: run mysql named database", "input": "", "output": "docker run --name database mysql"}
+{"instruction": "Translate this to a docker command: build from Dockerfile.staging", "input": "", "output": "docker build -f Dockerfile.staging ."}
+{"instruction": "Translate this to a docker command: show last 5 containers", "input": "", "output": "docker ps -n 5"}
+{"instruction": "Translate this to a docker command: show running containers", "input": "", "output": "docker ps"}
+{"instruction": "Translate this to a docker command: start docker compose", "input": "", "output": "docker-compose up"}
+{"instruction": "Translate this to a docker command: show logs for container web", "input": "", "output": "docker logs web"}
+{"instruction": "Translate this to a docker command: list files in container web", "input": "", "output": "docker exec web ls"}
+{"instruction": "Translate this to a docker command: show stats for container web", "input": "", "output": "docker stats web"}
+{"instruction": "Translate this to a docker command: show logs for worker service", "input": "", "output": "docker-compose logs worker"}
+{"instruction": "Translate this to a docker command: list running containers", "input": "", "output": "docker ps"}
+{"instruction": "Translate this to a docker command: create docker image", "input": "", "output": "docker build ."}
+{"instruction": "Translate this to a docker command: execute bash in db", "input": "", "output": "docker exec -it db bash"}
+{"instruction": "Translate this to a docker command: build with arg VERSION set to 2.0", "input": "", "output": "docker build --build-arg VERSION=2.0 ."}
+{"instruction": "Translate this to a docker command: create redis container called cache", "input": "", "output": "docker run --name cache redis"}
+{"instruction": "Translate this to a docker command: rebuild from scratch", "input": "", "output": "docker-compose build --no-cache"}
+{"instruction": "Translate this to a docker command: list all containers", "input": "", "output": "docker ps -a"}
+{"instruction": "Translate this to a docker command: detach db from mynet", "input": "", "output": "docker network disconnect mynet db"}
+{"instruction": "Translate this to a docker command: build webapp tagged 1.0", "input": "", "output": "docker build -t webapp:1.0 ."}
+{"instruction": "Translate this to a docker command: attach app to mynet", "input": "", "output": "docker network connect mynet app"}
+{"instruction": "Translate this to a docker command: show only container ids", "input": "", "output": "docker ps -q"}
+{"instruction": "Translate this to a docker command: start postgres container named main-db", "input": "", "output": "docker run --name main-db postgres"}
+{"instruction": "Translate this to a docker command: inspect container web", "input": "", "output": "docker inspect web"}
+{"instruction": "Translate this to a docker command: show container sizes", "input": "", "output": "docker ps -s"}
+{"instruction": "Translate this to a docker command: launch python container", "input": "", "output": "docker run python"}
+{"instruction": "Translate this to a docker command: show docker networks", "input": "", "output": "docker network ls"}
+{"instruction": "Translate this to a docker command: run nginx on host network", "input": "", "output": "docker run --network host nginx"}
+{"instruction": "Translate this to a docker command: start compose services", "input": "", "output": "docker-compose start"}
+{"instruction": "Translate this to a docker command: build with build arg ENV=prod", "input": "", "output": "docker build --build-arg ENV=prod ."}
+{"instruction": "Translate this to a docker command: run mysql on port 3306", "input": "", "output": "docker run -p 3306:3306 mysql"}
+{"instruction": "Translate this to a docker command: create network mynet", "input": "", "output": "docker network create mynet"}
+{"instruction": "Translate this to a docker command: follow logs of container app", "input": "", "output": "docker logs -f app"}
+{"instruction": "Translate this to a docker command: build myapp version 2 from dockerfile prod without cache", "input": "", "output": "docker build --no-cache -f Dockerfile.prod -t myapp:2.0 ."}
+{"instruction": "Translate this to a docker command: create ubuntu container", "input": "", "output": "docker run ubuntu"}
+{"instruction": "Translate this to a docker command: clean up containers", "input": "", "output": "docker container prune"}
+{"instruction": "Translate this to a docker command: start interactive node shell", "input": "", "output": "docker run -it node bash"}
+{"instruction": "Translate this to a docker command: build webapp tagged latest", "input": "", "output": "docker build -t webapp:latest ."}
+{"instruction": "Translate this to a docker command: list images", "input": "", "output": "docker images"}
+{"instruction": "Translate this to a docker command: tail logs for app", "input": "", "output": "docker logs --tail 100 app"}
+{"instruction": "Translate this to a docker command: run nginx named proxy", "input": "", "output": "docker run --name proxy nginx"}
+{"instruction": "Translate this to a docker command: scale api service to 3 instances", "input": "", "output": "docker-compose up -d --scale api=3"}
+{"instruction": "Translate this to a docker command: execute sh in nginx", "input": "", "output": "docker exec -it nginx sh"}
+{"instruction": "Translate this to a docker command: show containers including stopped", "input": "", "output": "docker ps -a"}
+{"instruction": "Translate this to a docker command: build with arg VERSION set to 1.0", "input": "", "output": "docker build --build-arg VERSION=1.0 ."}
+{"instruction": "Translate this to a docker command: run mysql named mysql-db", "input": "", "output": "docker run --name mysql-db mysql"}
+{"instruction": "Translate this to a docker command: disconnect container db from network appnet", "input": "", "output": "docker network disconnect appnet db"}
+{"instruction": "Translate this to a docker command: scale api to 2", "input": "", "output": "docker-compose up -d --scale api=2"}
+{"instruction": "Translate this to a docker command: map port 9000 to 80 for nginx", "input": "", "output": "docker run -p 9000:80 nginx"}
+{"instruction": "Translate this to a docker command: build with build arg NODE_ENV=development", "input": "", "output": "docker build --build-arg NODE_ENV=development ."}
+{"instruction": "Translate this to a docker command: build and tag as backend 1.0", "input": "", "output": "docker build -t backend:1.0 ."}
+{"instruction": "Translate this to a docker command: build image tagged webapp version latest", "input": "", "output": "docker build -t webapp:latest ."}
+{"instruction": "Translate this to a docker command: build service tagged 2.0", "input": "", "output": "docker build -t service:2.0 ."}
+{"instruction": "Translate this to a docker command: scale web service to 5 instances", "input": "", "output": "docker-compose up -d --scale web=5"}
+{"instruction": "Translate this to a docker command: start node container named api", "input": "", "output": "docker run --name api node"}
+{"instruction": "Translate this to a docker command: show system disk usage", "input": "", "output": "docker system df"}
+{"instruction": "Translate this to a docker command: expose mongo on port 27017", "input": "", "output": "docker run -p 27017:27017 mongo"}
+{"instruction": "Translate this to a docker command: open shell in container backend", "input": "", "output": "docker exec -it backend sh"}
+{"instruction": "Translate this to a docker command: run postgres with restart unless stopped", "input": "", "output": "docker run --restart unless-stopped postgres"}
+{"instruction": "Translate this to a docker command: display container statistics", "input": "", "output": "docker stats"}
+{"instruction": "Translate this to a docker command: run node", "input": "", "output": "docker run node"}
+{"instruction": "Translate this to a docker command: show processes in container db", "input": "", "output": "docker top db"}
+{"instruction": "Translate this to a docker command: open shell in db", "input": "", "output": "docker-compose exec db sh"}
+{"instruction": "Translate this to a docker command: create network appnet", "input": "", "output": "docker network create appnet"}
+{"instruction": "Translate this to a docker command: build with arg NODE_ENV set to development", "input": "", "output": "docker build --build-arg NODE_ENV=development ."}
+{"instruction": "Translate this to a docker command: start postgres with env POSTGRES_PASSWORD set to secret", "input": "", "output": "docker run -e POSTGRES_PASSWORD=secret postgres"}
+{"instruction": "Translate this to a docker command: start nginx container named proxy", "input": "", "output": "docker run --name proxy nginx"}
+{"instruction": "Translate this to a docker command: start redis container named cache", "input": "", "output": "docker run --name cache redis"}
+{"instruction": "Translate this to a docker command: run postgres named postgres-db", "input": "", "output": "docker run --name postgres-db postgres"}
+{"instruction": "Translate this to a docker command: follow logs of worker", "input": "", "output": "docker-compose logs -f worker"}
+{"instruction": "Translate this to a docker command: launch compose services", "input": "", "output": "docker-compose up"}
+{"instruction": "Translate this to a docker command: cleanup unused resources", "input": "", "output": "docker system prune"}
+{"instruction": "Translate this to a docker command: start all services", "input": "", "output": "docker-compose start"}
+{"instruction": "Translate this to a docker command: mount volume ./app:/app in node", "input": "", "output": "docker run -v ./app:/app node"}
+{"instruction": "Translate this to a docker command: create docker volume mysql-data", "input": "", "output": "docker volume create mysql-data"}
+{"instruction": "Translate this to a docker command: create nginx container called proxy", "input": "", "output": "docker run --name proxy nginx"}
+{"instruction": "Translate this to a docker command: disconnect container web from network appnet", "input": "", "output": "docker network disconnect appnet web"}
+{"instruction": "Translate this to a docker command: expose mysql on port 3307", "input": "", "output": "docker run -p 3307:3306 mysql"}
