@@ -2,11 +2,11 @@
 from llama_cpp import Llama
 import json
 
-llm = Llama(model_path="models/venvy_gemma3_q4km.gguf", n_ctx=512, n_threads=4)
+llm = Llama(model_path="assets/models/gemma3/base/venvy_gemma3_q4km.gguf", n_ctx=512, n_threads=4)
 
 # Load validation set
-with open('data/venvy_training.jsonl') as f:
-    examples = [json.loads(line) for line in f][-150:]  # Last 150 = validation
+with open('assets/data/mart/gemma.jsonl') as f:
+    examples = [json.loads(line) for line in f][-392:]  # Last 392 = validation
 
 correct = 0
 total = len(examples)

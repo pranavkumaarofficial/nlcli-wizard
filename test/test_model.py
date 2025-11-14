@@ -2,7 +2,7 @@ from llama_cpp import Llama
 
 # Load model
 llm = Llama(
-    model_path="models/venvy_gemma3_q4km.gguf",
+    model_path="assets/models/gemma3/base/venvy_gemma3_q4km.gguf",
     n_ctx=512,
     n_threads=4,
     verbose=False,
