@@ -27,21 +27,29 @@ def main():
 @click.option(
     "--cli-tool",
     default="venvy",
-    help="CLI tool to translate for (default: venvy)",
+    help="CLI tool to translate for (e.g., venvy, docker)",
+)
+@click.option(
+    "--model-path",
+    default=None,
+    type=click.Path(exists=True),
+    help="Path to GGUF model file (auto-detected if not specified)",
 )
 @click.argument("instruction", nargs=-1, required=True)
-def translate(cli_tool: str, instruction: tuple):
+def translate(cli_tool: str, model_path: str, instruction: tuple):
     """
     Translate natural language to CLI command.
 
-    Example:
-        nlcli-wizard translate create a python 3.10 environment
+    Examples:
+        nlcli-wizard translate list all environments
+        nlcli-wizard translate --cli-tool docker show running containers
     """
     nl_instruction = " ".join(instruction)
 
     console.print(f"[dim]Translating for {cli_tool}...[/dim]\n")
 
-    agent = NLCLIAgent(cli_tool=cli_tool)
+    model_path_obj = Path(model_path) if model_path else None
+    agent = NLCLIAgent(cli_tool=cli_tool, model_path=model_path_obj)
 
     try:
         result = agent.translate(nl_instruction)
@@ -108,6 +116,29 @@ def cache_dir():
             console.print("[yellow]No models cached yet.[/yellow]")
     else:
         console.print("[yellow]Cache directory does not exist yet.[/yellow]")
+
+
+@main.command()
+def list_tools():
+    """
+    Show available CLI tools and their model status.
+    """
+    table = Table(title="Available CLI Tools")
+    table.add_column("Tool", style="cyan")
+    table.add_column("Model File", style="green")
+    table.add_column("Status", style="yellow")
+
+    for tool, info in ModelManager.MODEL_REGISTRY.items():
+        manager = ModelManager(cli_tool=tool)
+        local_path = manager._find_local_model()
+        if local_path:
+            size_mb = local_path.stat().st_size / (1024 * 1024)
+            status = f"Ready ({size_mb:.0f} MB)"
+        else:
+            status = "Not found"
+        table.add_row(tool, info["filename"], status)
+
+    console.print(table)
 
 
 if __name__ == "__main__":

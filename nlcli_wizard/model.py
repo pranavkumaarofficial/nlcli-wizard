@@ -31,8 +31,18 @@ class ModelManager:
     - Model caching
     """
 
-    DEFAULT_MODEL_REPO = "YOUR_USERNAME/nlcli-tinyllama-venvy"  # Update after training
-    DEFAULT_MODEL_FILE = "nlcli-tinyllama-venvy-q4_k_m.gguf"
+    # Model registry: maps CLI tool name to model filename and HuggingFace repo
+    MODEL_REGISTRY = {
+        "venvy": {
+            "filename": "venvy_gemma3_q4km.gguf",
+            "repo": "pranavkumaarofficial/nlcli-gemma3-venvy",
+        },
+        "docker": {
+            "filename": "docker_gemma3_q4km.gguf",
+            "repo": "pranavkumaarofficial/nlcli-gemma3-docker",
+        },
+    }
+    DEFAULT_FILENAME_PATTERN = "{tool}_gemma3_q4km.gguf"
 
     def __init__(
         self,
@@ -63,13 +73,32 @@ class ModelManager:
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
     @property
-    def model(self) -> Llama:
+    def model(self):
         """
         Lazy-load the model on first access.
         """
         if self._model is None:
             self._load_model()
         return self._model
+
+    def _get_model_filename(self) -> str:
+        """Get expected model filename for this CLI tool."""
+        if self.cli_tool in self.MODEL_REGISTRY:
+            return self.MODEL_REGISTRY[self.cli_tool]["filename"]
+        return self.DEFAULT_FILENAME_PATTERN.format(tool=self.cli_tool)
+
+    def _find_local_model(self) -> Optional[Path]:
+        """Search for model file in common local locations."""
+        filename = self._get_model_filename()
+        search_paths = [
+            Path("models") / filename,
+            Path(__file__).parent.parent / "models" / filename,
+            self.cache_dir / filename,
+        ]
+        for path in search_paths:
+            if path.exists():
+                return path
+        return None
 
     def _load_model(self):
         """
@@ -81,7 +110,9 @@ class ModelManager:
                 "Install with: pip install llama-cpp-python"
             )
 
-        # Determine model path
+        # Determine model path: explicit > local > cache > download
+        if self._model_path is None:
+            self._model_path = self._find_local_model()
         if self._model_path is None:
             self._model_path = self._download_model()
 
@@ -117,18 +148,29 @@ class ModelManager:
                 "Install with: pip install huggingface-hub"
             )
 
+        filename = self._get_model_filename()
+
         # Check cache first
-        cached_model = self.cache_dir / self.DEFAULT_MODEL_FILE
+        cached_model = self.cache_dir / filename
         if cached_model.exists():
             print(f"Using cached model: {cached_model}")
             return cached_model
 
-        print(f"Downloading model from {self.DEFAULT_MODEL_REPO}...")
+        # Resolve repo from registry
+        if self.cli_tool not in self.MODEL_REGISTRY:
+            raise ValueError(
+                f"No model configured for '{self.cli_tool}'. "
+                f"Available tools: {list(self.MODEL_REGISTRY.keys())}. "
+                "Provide a local model path with --model-path instead."
+            )
+
+        repo = self.MODEL_REGISTRY[self.cli_tool]["repo"]
+        print(f"Downloading model from {repo}...")
 
         try:
             downloaded_path = hf_hub_download(
-                repo_id=self.DEFAULT_MODEL_REPO,
-                filename=self.DEFAULT_MODEL_FILE,
+                repo_id=repo,
+                filename=filename,
                 cache_dir=str(self.cache_dir),
             )
 
@@ -139,8 +181,8 @@ class ModelManager:
             raise RuntimeError(
                 f"Failed to download model: {e}\n"
                 "Make sure you have:\n"
-                "1. Trained and uploaded the model to HuggingFace Hub\n"
-                "2. Set the correct repo ID in ModelManager.DEFAULT_MODEL_REPO\n"
+                f"1. A trained model at {repo} on HuggingFace Hub\n"
+                f"2. Or place {filename} in the models/ directory\n"
                 "3. Or provide a local model path explicitly"
             )
 
@@ -163,7 +205,7 @@ class ModelManager:
             max_tokens=128,
             temperature=0.1,  # Low temperature for more deterministic output
             top_p=0.9,
-            stop=["</s>", "\n\n"],  # Stop tokens
+            stop=["<end_of_turn>"],  # Gemma 3 stop token
             echo=False,
         )
 
@@ -174,17 +216,22 @@ class ModelManager:
 
     def _build_prompt(self, natural_language: str) -> str:
         """
-        Build the prompt for the model (must match training format).
+        Build the prompt for the model (must match Gemma 3 training format).
 
         Training format:
-        <s>[INST] Translate to {cli_tool} command: {natural_language} [/INST]
+        <start_of_turn>user
+        Translate to {cli_tool} command: {natural_language}<end_of_turn>
+        <start_of_turn>model
         COMMAND: {command}
         CONFIDENCE: {confidence}
         EXPLANATION: {explanation}
-        </s>
+        <end_of_turn>
         """
-        prompt = f"<s>[INST] Translate to {self.cli_tool} command: {natural_language} [/INST]\n"
-
+        prompt = (
+            f"<start_of_turn>user\n"
+            f"Translate to {self.cli_tool} command: {natural_language}<end_of_turn>\n"
+            f"<start_of_turn>model\n"
+        )
         return prompt
 
     def get_model_info(self) -> Dict[str, Any]:

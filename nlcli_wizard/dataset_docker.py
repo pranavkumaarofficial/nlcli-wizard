@@ -642,13 +642,13 @@ class DockerDatasetGenerator:
             ("remove all unused images", "docker image prune -a"),
         ]
 
-        # Stop/Remove - expanded
+        # Stop/Remove - using safe Docker CLI commands (no shell expansion)
         stop_remove = [
-            ("stop all running containers", "docker stop $(docker ps -q)"),
-            ("stop all containers", "docker stop $(docker ps -q)"),
-            ("halt all running containers", "docker stop $(docker ps -q)"),
-            ("remove all stopped containers", "docker rm $(docker ps -a -q)"),
-            ("delete all stopped containers", "docker rm $(docker ps -a -q)"),
+            ("stop all running containers", "docker container stop web"),
+            ("stop a container", "docker container stop api"),
+            ("remove a stopped container", "docker container rm web"),
+            ("delete a container", "docker container rm api"),
+            ("force remove a container", "docker container rm -f worker"),
         ]
 
         examples.extend(self._format_examples(info))
@@ -656,16 +656,286 @@ class DockerDatasetGenerator:
         examples.extend(self._format_examples(stop_remove))
         return examples
 
+    def _generate_explanation(self, command: str) -> str:
+        """Generate a human-readable explanation from a docker command."""
+        parts = command.split()
+        if not parts:
+            return "Executes Docker command"
+
+        # docker-compose commands
+        if parts[0] == "docker-compose":
+            if len(parts) < 2:
+                return "Runs docker-compose"
+            sub = parts[1]
+            rest = parts[2:]
+            if sub == "up":
+                if "--scale" in rest:
+                    idx = rest.index("--scale")
+                    if idx + 1 < len(rest):
+                        return f"Scales {rest[idx+1]} in detached compose mode"
+                if "-d" in rest:
+                    return "Starts all compose services in background"
+                return "Starts all compose services"
+            if sub == "down":
+                if "-v" in rest:
+                    return "Stops compose services and removes volumes"
+                return "Stops and removes compose services"
+            if sub == "build":
+                if "--no-cache" in rest:
+                    return "Rebuilds compose service images without cache"
+                return "Builds compose service images"
+            if sub == "logs":
+                if "-f" in rest:
+                    svc = [r for r in rest if r != "-f"]
+                    if svc:
+                        return f"Follows log output for {svc[0]} service"
+                    return "Follows compose service logs"
+                svc = [r for r in rest if not r.startswith("-")]
+                if svc:
+                    return f"Shows logs for {svc[0]} service"
+                return "Shows compose service logs"
+            if sub == "ps":
+                return "Lists compose service status"
+            if sub == "restart":
+                return "Restarts all compose services"
+            if sub == "stop":
+                return "Stops compose services"
+            if sub == "start":
+                return "Starts compose services"
+            if sub == "exec":
+                svc = rest[0] if rest else "service"
+                shell = rest[1] if len(rest) > 1 else "shell"
+                return f"Opens {shell} in {svc} service container"
+            if sub == "pull":
+                return "Pulls latest images for compose services"
+            return f"Runs docker-compose {sub}"
+
+        # docker commands (parts[0] == "docker")
+        if len(parts) < 2:
+            return "Runs Docker"
+
+        sub = parts[1]
+
+        # docker run
+        if sub == "run":
+            flags = []
+            image = parts[-1]  # image is typically last arg
+            if "-d" in parts:
+                flags.append("in detached mode")
+            if "-it" in parts:
+                flags.append("interactively")
+            if "--rm" in parts:
+                flags.append("with auto-removal")
+            for i, p in enumerate(parts):
+                if p == "-p" and i + 1 < len(parts):
+                    flags.append(f"mapping port {parts[i+1]}")
+                if p == "--name" and i + 1 < len(parts):
+                    flags.append(f"named {parts[i+1]}")
+                if p == "-e" and i + 1 < len(parts):
+                    flags.append(f"with env {parts[i+1].split('=')[0]}")
+                if p == "-v" and i + 1 < len(parts):
+                    flags.append(f"with volume mount")
+                if p == "--restart" and i + 1 < len(parts):
+                    flags.append(f"restart policy {parts[i+1]}")
+                if p == "--network" and i + 1 < len(parts):
+                    flags.append(f"on {parts[i+1]} network")
+            desc = f"Runs {image} container"
+            if flags:
+                desc += " " + ", ".join(flags)
+            return desc
+
+        # docker build
+        if sub == "build":
+            flags = []
+            for i, p in enumerate(parts):
+                if p == "-t" and i + 1 < len(parts):
+                    flags.append(f"tagged as {parts[i+1]}")
+                if p == "-f" and i + 1 < len(parts):
+                    flags.append(f"using {parts[i+1]}")
+                if p == "--no-cache":
+                    flags.append("without cache")
+                if p == "--build-arg" and i + 1 < len(parts):
+                    flags.append(f"with build arg {parts[i+1].split('=')[0]}")
+            desc = "Builds Docker image"
+            if flags:
+                desc += " " + ", ".join(flags)
+            return desc
+
+        # docker ps
+        if sub == "ps":
+            if "-a" in parts:
+                return "Lists all containers including stopped"
+            if "-s" in parts:
+                return "Lists containers with size information"
+            if "-q" in parts:
+                return "Lists container IDs only"
+            if "-l" in parts:
+                return "Shows the latest container"
+            if "-n" in parts:
+                idx = parts.index("-n")
+                n = parts[idx+1] if idx + 1 < len(parts) else "N"
+                return f"Shows last {n} containers"
+            return "Lists running containers"
+
+        # docker images
+        if sub == "images":
+            if "-a" in parts:
+                return "Lists all Docker images"
+            if "-q" in parts:
+                return "Lists image IDs only"
+            if "--digests" in parts:
+                return "Lists images with digest information"
+            return "Lists Docker images"
+
+        # docker logs
+        if sub == "logs":
+            container = parts[-1] if len(parts) > 2 else "container"
+            if "-f" in parts:
+                return f"Follows log output for {container}"
+            if "--tail" in parts:
+                return f"Shows recent logs for {container}"
+            return f"Shows logs for {container}"
+
+        # docker inspect
+        if sub == "inspect":
+            target = parts[-1] if len(parts) > 2 else "target"
+            return f"Shows detailed information about {target}"
+
+        # docker stats
+        if sub == "stats":
+            if len(parts) > 2:
+                return f"Shows resource usage for {parts[-1]}"
+            return "Shows live container resource usage"
+
+        # docker top
+        if sub == "top":
+            container = parts[-1] if len(parts) > 2 else "container"
+            return f"Shows running processes in {container}"
+
+        # docker exec
+        if sub == "exec":
+            flags = parts[2:]
+            container = None
+            cmd = None
+            skip_next = False
+            for i, p in enumerate(flags):
+                if skip_next:
+                    skip_next = False
+                    continue
+                if p in ("-w", "--workdir"):
+                    skip_next = True
+                    continue
+                if p.startswith("-"):
+                    continue
+                if container is None:
+                    container = p
+                elif cmd is None:
+                    cmd = p
+            if "-w" in parts:
+                idx = parts.index("-w")
+                workdir = parts[idx+1] if idx + 1 < len(parts) else "/path"
+                return f"Executes command in {workdir} directory of {container or 'container'}"
+            if "-it" in parts:
+                return f"Opens interactive {cmd or 'shell'} in {container or 'container'}"
+            return f"Executes command in {container or 'container'}"
+
+        # docker network
+        if sub == "network":
+            if len(parts) < 3:
+                return "Manages Docker networks"
+            action = parts[2]
+            if action == "ls":
+                return "Lists Docker networks"
+            if action == "create":
+                name = parts[3] if len(parts) > 3 else "network"
+                return f"Creates Docker network {name}"
+            if action == "connect":
+                net = parts[3] if len(parts) > 3 else "network"
+                cont = parts[4] if len(parts) > 4 else "container"
+                return f"Connects {cont} to {net} network"
+            if action == "disconnect":
+                net = parts[3] if len(parts) > 3 else "network"
+                cont = parts[4] if len(parts) > 4 else "container"
+                return f"Disconnects {cont} from {net} network"
+            if action == "inspect":
+                net = parts[3] if len(parts) > 3 else "network"
+                return f"Shows details of {net} network"
+            if action == "rm":
+                net = parts[3] if len(parts) > 3 else "network"
+                return f"Removes {net} network"
+            if action == "prune":
+                return "Removes all unused networks"
+            return f"Manages Docker network ({action})"
+
+        # docker volume
+        if sub == "volume":
+            if len(parts) < 3:
+                return "Manages Docker volumes"
+            action = parts[2]
+            if action == "ls":
+                return "Lists Docker volumes"
+            if action == "create":
+                name = parts[3] if len(parts) > 3 else "volume"
+                return f"Creates Docker volume {name}"
+            if action == "inspect":
+                name = parts[3] if len(parts) > 3 else "volume"
+                return f"Shows details of {name} volume"
+            if action == "rm":
+                name = parts[3] if len(parts) > 3 else "volume"
+                return f"Removes {name} volume"
+            if action == "prune":
+                return "Removes all unused volumes"
+            return f"Manages Docker volume ({action})"
+
+        # docker system
+        if sub == "system":
+            if len(parts) < 3:
+                return "Manages Docker system"
+            action = parts[2]
+            if action == "prune":
+                if "-a" in parts:
+                    return "Removes all unused Docker data including images"
+                return "Removes unused Docker data"
+            if action == "df":
+                return "Shows Docker disk usage"
+            return f"Docker system {action}"
+
+        # docker info/version
+        if sub == "info":
+            return "Shows Docker system information"
+        if sub == "version":
+            return "Shows Docker version"
+
+        # docker container/image prune
+        if sub == "container":
+            if "prune" in parts:
+                return "Removes all stopped containers"
+            return "Manages Docker containers"
+        if sub == "image":
+            if "prune" in parts:
+                if "-a" in parts:
+                    return "Removes all unused images"
+                return "Removes dangling images"
+            return "Manages Docker images"
+
+        return f"Executes docker {sub}"
+
     def _format_examples(self, patterns: List[tuple]) -> List[Dict[str, str]]:
-        """Convert (instruction, output) tuples to Alpaca format"""
-        return [
-            {
-                "instruction": f"Translate this to a docker command: {instruction}",
+        """Convert (instruction, command) tuples to Alpaca format with structured output."""
+        formatted = []
+        for instruction, command in patterns:
+            confidence = round(random.uniform(0.90, 0.97), 2)
+            explanation = self._generate_explanation(command)
+            formatted.append({
+                "instruction": f"Translate to docker command: {instruction}",
                 "input": "",
-                "output": output
-            }
-            for instruction, output in patterns
-        ]
+                "output": (
+                    f"COMMAND: {command}\n"
+                    f"CONFIDENCE: {confidence}\n"
+                    f"EXPLANATION: {explanation}\n"
+                ),
+            })
+        return formatted
 
     def generate_dataset(self, output_file: str = "data/docker_training.jsonl",
                         target_count: int = 600) -> None:
