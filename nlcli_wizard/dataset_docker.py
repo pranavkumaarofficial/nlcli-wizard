@@ -137,11 +137,13 @@ class DockerDatasetGenerator:
                     (f"start {img} with env {env_var} set to {pwd}", f"docker run -e {env_var}={pwd} {img}"),
                 ])
 
-        # NODE_ENV variations
+        # NODE_ENV variations - reinforce = syntax
         for env in ['production', 'development', 'staging']:
             env_vars.extend([
                 (f"run node with NODE_ENV {env}", f"docker run -e NODE_ENV={env} node"),
                 (f"set NODE_ENV to {env} in node", f"docker run -e NODE_ENV={env} node"),
+                (f"run node with NODE_ENV={env}", f"docker run -e NODE_ENV={env} node"),
+                (f"start node setting NODE_ENV to {env}", f"docker run -e NODE_ENV={env} node"),
             ])
 
         # Volume mounts (-v) - expanded
@@ -196,11 +198,15 @@ class DockerDatasetGenerator:
              "docker run --rm -p 80:80 --name web -v /data:/usr/share/nginx/html nginx"),
         ]
 
-        # Restart policies (--restart)
+        # Restart policies (--restart) - reinforced
         restart = [
             ("run nginx with restart always", "docker run --restart always nginx"),
             ("run redis with restart on failure", "docker run --restart on-failure redis"),
             ("run postgres with restart unless stopped", "docker run --restart unless-stopped postgres"),
+            ("start nginx with always restart policy", "docker run -d --restart always nginx"),
+            ("run redis that restarts on failure", "docker run -d --restart on-failure redis"),
+            ("run postgres with restart unless-stopped", "docker run -d --restart unless-stopped postgres"),
+            ("run mysql with auto restart", "docker run --restart always mysql"),
         ]
 
         # Network settings (--network)
@@ -434,30 +440,35 @@ class DockerDatasetGenerator:
         """docker-compose - Multi-container orchestration"""
         examples = []
 
-        # Up/Down - expanded
+        # Up/Down - expanded, always use full "docker-compose" prefix
         up_down = [
             ("start docker compose", "docker-compose up"),
             ("bring up compose", "docker-compose up"),
             ("launch compose services", "docker-compose up"),
+            ("docker-compose up", "docker-compose up"),
             ("start services in background", "docker-compose up -d"),
             ("start compose detached", "docker-compose up -d"),
             ("bring up compose in background", "docker-compose up -d"),
             ("start compose in detached mode", "docker-compose up -d"),
+            ("run docker-compose detached", "docker-compose up -d"),
             ("stop docker compose", "docker-compose down"),
             ("bring down compose", "docker-compose down"),
             ("stop compose services", "docker-compose down"),
+            ("docker-compose down", "docker-compose down"),
             ("stop and remove volumes", "docker-compose down -v"),
             ("bring down compose and delete volumes", "docker-compose down -v"),
         ]
 
-        # Build - expanded
+        # Build - expanded, always include "compose" keyword to avoid docker build confusion
         build = [
             ("build compose services", "docker-compose build"),
-            ("build services", "docker-compose build"),
+            ("docker-compose build", "docker-compose build"),
+            ("build compose images", "docker-compose build"),
             ("rebuild compose services", "docker-compose build"),
-            ("rebuild services without cache", "docker-compose build --no-cache"),
+            ("build all compose services", "docker-compose build"),
+            ("rebuild compose services without cache", "docker-compose build --no-cache"),
             ("build compose without cache", "docker-compose build --no-cache"),
-            ("rebuild from scratch", "docker-compose build --no-cache"),
+            ("rebuild compose from scratch", "docker-compose build --no-cache"),
         ]
 
         # Logs - expanded
@@ -470,8 +481,10 @@ class DockerDatasetGenerator:
         services = ['web', 'api', 'db', 'redis', 'worker']
         for svc in services:
             logs.extend([
+                (f"show compose logs for {svc} service", f"docker-compose logs {svc}"),
                 (f"show logs for {svc} service", f"docker-compose logs {svc}"),
-                (f"follow logs of {svc}", f"docker-compose logs -f {svc}"),
+                (f"follow compose logs of {svc}", f"docker-compose logs -f {svc}"),
+                (f"follow logs of {svc} service", f"docker-compose logs -f {svc}"),
             ])
 
         # Service management - expanded
@@ -501,15 +514,16 @@ class DockerDatasetGenerator:
                     (f"scale {svc} to {count}", f"docker-compose up -d --scale {svc}={count}"),
                 ])
 
-        # Exec in compose - distinguish from docker exec with "service" keyword
+        # Exec in compose - use "service" keyword to distinguish from docker exec
+        # IMPORTANT: Never use bare "compose" as prefix — model learns it as standalone command
         exec_cmds = []
         for svc in ['web', 'api', 'db', 'redis', 'worker']:
             exec_cmds.extend([
                 (f"run bash in {svc} service", f"docker-compose exec {svc} bash"),
                 (f"execute bash in {svc} service", f"docker-compose exec {svc} bash"),
                 (f"open shell in {svc} service", f"docker-compose exec {svc} bash"),
-                (f"compose exec bash in {svc}", f"docker-compose exec {svc} bash"),
-                (f"run command in compose {svc}", f"docker-compose exec {svc} sh"),
+                (f"docker-compose exec into {svc}", f"docker-compose exec {svc} bash"),
+                (f"run command in {svc} service container", f"docker-compose exec {svc} sh"),
             ])
 
         # Pull/Push
