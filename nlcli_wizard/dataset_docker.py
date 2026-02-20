@@ -228,12 +228,16 @@ class DockerDatasetGenerator:
         """docker build - Building images from Dockerfile"""
         examples = []
 
-        # Basic builds
+        # Basic builds - reinforce trailing '.' (build context)
         basic = [
             ("build image from current directory", "docker build ."),
             ("build docker image", "docker build ."),
             ("build image", "docker build ."),
             ("create docker image", "docker build ."),
+            ("build image here", "docker build ."),
+            ("build from current folder", "docker build ."),
+            ("build dockerfile", "docker build ."),
+            ("build from this directory", "docker build ."),
         ]
 
         # Tagged builds - expanded
@@ -246,6 +250,7 @@ class DockerDatasetGenerator:
                     (f"build image tagged {app} version {ver}", f"docker build -t {app}:{ver} ."),
                     (f"build and tag as {app} {ver}", f"docker build -t {app}:{ver} ."),
                     (f"build {app} tagged {ver}", f"docker build -t {app}:{ver} ."),
+                    (f"create image {app} {ver}", f"docker build -t {app}:{ver} ."),
                 ])
 
         # Custom Dockerfile
@@ -376,17 +381,28 @@ class DockerDatasetGenerator:
         """docker exec - Execute commands in running containers"""
         examples = []
 
-        # Interactive shell - expanded
+        # Interactive shell - expanded with strong -it reinforcement
         interactive = []
         containers = ['web', 'api', 'db', 'nginx', 'app', 'backend']
-        shells = [('bash', 'bash'), ('sh', 'sh')]
+        # Explicit shell requests - user says which shell
         for container in containers:
-            for shell_desc, shell_cmd in shells:
-                interactive.extend([
-                    (f"run {shell_desc} in container {container}", f"docker exec -it {container} {shell_cmd}"),
-                    (f"open shell in container {container}", f"docker exec -it {container} {shell_cmd}"),
-                    (f"execute {shell_desc} in {container}", f"docker exec -it {container} {shell_cmd}"),
-                ])
+            interactive.extend([
+                (f"run bash in container {container}", f"docker exec -it {container} bash"),
+                (f"execute bash in {container}", f"docker exec -it {container} bash"),
+                (f"open bash in {container}", f"docker exec -it {container} bash"),
+                (f"run sh in container {container}", f"docker exec -it {container} sh"),
+                (f"execute sh in {container}", f"docker exec -it {container} sh"),
+            ])
+        # Generic "open shell" - always use bash, always -it
+        for container in containers:
+            interactive.extend([
+                (f"open shell in container {container}", f"docker exec -it {container} bash"),
+                (f"get shell in {container}", f"docker exec -it {container} bash"),
+                (f"connect to {container} shell", f"docker exec -it {container} bash"),
+                (f"attach to {container}", f"docker exec -it {container} bash"),
+                (f"enter container {container}", f"docker exec -it {container} bash"),
+                (f"shell into {container}", f"docker exec -it {container} bash"),
+            ])
 
         # Non-interactive commands
         non_interactive = []
@@ -399,12 +415,14 @@ class DockerDatasetGenerator:
             for container in containers[:4]:
                 non_interactive.append((f"{desc} in container {container}", f"docker exec {container} {cmd}"))
 
-        # Working directory
+        # Working directory - reinforced -w flag pattern
         workdir = []
-        for container in containers[:3]:
+        for container in containers[:4]:
             workdir.extend([
                 (f"run ls in /app directory of container {container}", f"docker exec -w /app {container} ls"),
                 (f"list files in /var/log of {container}", f"docker exec -w /var/log {container} ls"),
+                (f"run pwd in /home of {container}", f"docker exec -w /home {container} pwd"),
+                (f"execute command in /tmp directory of {container}", f"docker exec -w /tmp {container} ls"),
             ])
 
         examples.extend(self._format_examples(interactive))
@@ -460,12 +478,18 @@ class DockerDatasetGenerator:
         management = [
             ("list compose services", "docker-compose ps"),
             ("show compose status", "docker-compose ps"),
+            ("show compose service status", "docker-compose ps"),
             ("restart compose services", "docker-compose restart"),
             ("restart all services", "docker-compose restart"),
+            ("restart compose", "docker-compose restart"),
             ("stop compose services", "docker-compose stop"),
-            ("stop all services", "docker-compose stop"),
+            ("stop all compose services", "docker-compose stop"),
+            ("pause compose services", "docker-compose stop"),
+            ("start stopped compose services", "docker-compose start"),
             ("start compose services", "docker-compose start"),
-            ("start all services", "docker-compose start"),
+            ("resume compose services", "docker-compose start"),
+            ("start all services", "docker-compose up -d"),
+            ("launch all services", "docker-compose up -d"),
         ]
 
         # Scale - expanded
@@ -477,13 +501,15 @@ class DockerDatasetGenerator:
                     (f"scale {svc} to {count}", f"docker-compose up -d --scale {svc}={count}"),
                 ])
 
-        # Exec - expanded
+        # Exec in compose - distinguish from docker exec with "service" keyword
         exec_cmds = []
         for svc in ['web', 'api', 'db', 'redis', 'worker']:
             exec_cmds.extend([
                 (f"run bash in {svc} service", f"docker-compose exec {svc} bash"),
-                (f"open shell in {svc}", f"docker-compose exec {svc} sh"),
-                (f"execute bash in {svc}", f"docker-compose exec {svc} bash"),
+                (f"execute bash in {svc} service", f"docker-compose exec {svc} bash"),
+                (f"open shell in {svc} service", f"docker-compose exec {svc} bash"),
+                (f"compose exec bash in {svc}", f"docker-compose exec {svc} bash"),
+                (f"run command in compose {svc}", f"docker-compose exec {svc} sh"),
             ])
 
         # Pull/Push
@@ -644,12 +670,29 @@ class DockerDatasetGenerator:
 
         # Stop/Remove - using safe Docker CLI commands (no shell expansion)
         stop_remove = [
-            ("stop all running containers", "docker container stop web"),
-            ("stop a container", "docker container stop api"),
+            ("stop container web", "docker container stop web"),
+            ("stop container api", "docker container stop api"),
+            ("stop the web container", "docker stop web"),
+            ("stop the api container", "docker stop api"),
+            ("stop the worker container", "docker stop worker"),
             ("remove a stopped container", "docker container rm web"),
-            ("delete a container", "docker container rm api"),
+            ("delete container api", "docker container rm api"),
+            ("remove container web", "docker rm web"),
             ("force remove a container", "docker container rm -f worker"),
+            ("force delete container api", "docker rm -f api"),
         ]
+
+        # Image listing - reinforcement for weak category
+        image_listing = [
+            ("list all images", "docker images -a"),
+            ("show all docker images", "docker images -a"),
+            ("list all local images", "docker images -a"),
+            ("list images including intermediates", "docker images -a"),
+            ("list image ids", "docker images -q"),
+            ("show image ids only", "docker images -q"),
+        ]
+
+        examples.extend(self._format_examples(image_listing))
 
         examples.extend(self._format_examples(info))
         examples.extend(self._format_examples(cleanup))
@@ -906,10 +949,28 @@ class DockerDatasetGenerator:
         if sub == "version":
             return "Shows Docker version"
 
+        # docker stop/rm (shorthand)
+        if sub == "stop":
+            target = parts[2] if len(parts) > 2 else "container"
+            return f"Stops {target} container"
+        if sub == "rm":
+            target = parts[-1] if len(parts) > 2 else "container"
+            if "-f" in parts:
+                return f"Force removes {target} container"
+            return f"Removes {target} container"
+
         # docker container/image prune
         if sub == "container":
             if "prune" in parts:
                 return "Removes all stopped containers"
+            if "stop" in parts:
+                target = parts[-1] if len(parts) > 3 else "container"
+                return f"Stops {target} container"
+            if "rm" in parts:
+                target = parts[-1] if len(parts) > 3 else "container"
+                if "-f" in parts:
+                    return f"Force removes {target} container"
+                return f"Removes {target} container"
             return "Manages Docker containers"
         if sub == "image":
             if "prune" in parts:
