@@ -68,11 +68,7 @@ history.json
 
 
 
-# Internal docs (keep private)
-docs/AGENT_INSTRUCTIONS.md
-docs/VENVY_AUDIT_REPORT.md
-docs/DATASET_GENERATION_REPORT.md
-docs/TECHNICAL_ANALYSIS.md
+# (private docs listed at bottom of file)
 
 # Build artifacts (from Colab - don't commit)
 /llama.cpp/
@@ -87,5 +83,21 @@ imatrix_data.txt
 
 
 PRE_PUSH_CHECKLIST.md
-/docs
-PRE_PUSH_CHECKLIST.md
+
+# Private docs (session notes, drafts, internal plans)
+docs/AGENT_INSTRUCTIONS.md
+docs/CLAUDE_PROJECT_CONTEXT.md
+docs/COMMUNITY_ENGAGEMENT_PLAN.md
+docs/BLOG_CONTENT.md
+docs/GITHUB_DESCRIPTIONS.md
+docs/GITHUB_ISSUES_TEMPLATE.md
+docs/PRE_PUSH_CHECKLIST.md
+docs/adversary.md
+docs/self.md
+docs/01 new plan.md
+docs/4B results.md
+docs/This is brilliant.md
+docs/NEXT_STEPS_DOCKER.md
+docs/VENVY_AUDIT_REPORT.md
+docs/DATASET_GENERATION_REPORT.md
+docs/TECHNICAL_ANALYSIS.md

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(humanizer)",
+      "Skill(humanizer:*)",
+      "Bash(python scripts/plot_comparison.py:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(powershell -Command:*)"
+    ]
+  }
+}
