@@ -18,7 +18,7 @@ docker -w "run nginx on port 8080 with production env in background"
 ## Demo
 
 <!-- TO EMBED: open any issue on this repo, drag demo/nl-cli.mp4 into the comment box, copy the generated URL, paste it below, and remove this comment -->
-https://github.com/user-attachments/assets/VIDEO_ID_HERE
+[https://github.com/user-attachments/assets/VIDEO_ID_HERE](https://github.com/user-attachments/assets/2d7ca418-d6b2-4449-a81e-417df9666d44)
 
 ## Results: Docker CLI translation
 
