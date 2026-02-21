@@ -38,11 +38,11 @@ class ModelManager:
             "repo": "pranavkumaarofficial/nlcli-gemma3-venvy",
         },
         "docker": {
-            "filename": "docker_gemma3_q4km.gguf",
+            "filename": "docker_gemma3_4b_q4km.gguf",
             "repo": "pranavkumaarofficial/nlcli-gemma3-docker",
         },
     }
-    DEFAULT_FILENAME_PATTERN = "{tool}_gemma3_q4km.gguf"
+    DEFAULT_FILENAME_PATTERN = "{tool}_gemma3_4b_q4km.gguf"
 
     def __init__(
         self,

@@ -3,7 +3,7 @@ from llama_cpp import Llama
 import json
 import time
 
-llm = Llama(model_path="models/docker_gemma3_q4km.gguf", n_ctx=512, n_threads=4, verbose=False)
+llm = Llama(model_path="models/docker_gemma3_4b_q4km.gguf", n_ctx=512, n_threads=4, verbose=False)
 
 # Load validation set (last ~100 examples)
 with open('data/docker_training.jsonl') as f:
