@@ -38,11 +38,11 @@ class ModelManager:
             "repo": "pranavkumaarofficial/nlcli-gemma3-venvy",
         },
         "docker": {
-            "filename": "docker_gemma3_4b_q4km.gguf",
-            "repo": "pranavkumaarofficial/nlcli-gemma3-docker",
+            "filename": "docker_gemma4_e2b_q4km.gguf",  # Updated to Gemma 4 E2B
+            "repo": "pranavkumaarofficial/nlcli-gemma4-docker",  # Updated repo
         },
     }
-    DEFAULT_FILENAME_PATTERN = "{tool}_gemma3_4b_q4km.gguf"
+    DEFAULT_FILENAME_PATTERN = "{tool}_gemma4_e2b_q4km.gguf"  # Updated default pattern
 
     def __init__(
         self,
@@ -205,7 +205,7 @@ class ModelManager:
             max_tokens=128,
             temperature=0.1,  # Low temperature for more deterministic output
             top_p=0.9,
-            stop=["<end_of_turn>"],  # Gemma 3 stop token
+            stop=["<end_of_turn>"],  # Gemma 4 stop token (same as Gemma 3)
             echo=False,
         )
 
@@ -216,9 +216,9 @@ class ModelManager:
 
     def _build_prompt(self, natural_language: str) -> str:
         """
-        Build the prompt for the model (must match Gemma 3 training format).
+        Build the prompt for the model (must match Gemma 4 training format).
 
-        Training format:
+        Training format (same as Gemma 3):
         <start_of_turn>user
         Translate to {cli_tool} command: {natural_language}<end_of_turn>
         <start_of_turn>model
