@@ -73,19 +73,78 @@ Recorded so the reasoning is not lost. Details in `docs/EVAL_METHODOLOGY.md` (pe
 
 The piece everything else depends on. Nothing else ships until this does.
 
-- [ ] `eval/splits.py` — split by *target command*, not by row. Guarantee zero
-      command overlap between train and test.
-- [ ] `data/docker_test_handwritten.jsonl` — 100–150 held-out prompts written in
-      natural human phrasing, not generator templates.
-- [ ] `eval/contamination.py` — reusable audit: exact-prompt overlap, target-command
-      overlap, near-duplicate detection. Runs on any train/test pair.
-- [ ] `eval/metrics.py` — exact match + normalized match (flag-order invariant) +
-      functional equivalence, reported side by side.
-- [ ] `eval/run_eval.py` — replaces `scripts/legacy/evaluate_docker_LEGACY.py`.
-- [ ] `docs/EVAL_METHODOLOGY.md` — what was wrong, how it was found, how it is fixed,
-      and the corrected numbers next to the old ones.
-- [ ] Re-score the existing 1B and 4B GGUFs on the clean set. Publish whatever
-      comes out, including a drop.
+- [x] `eval/normalize.py` — structural command parsing (path / flag-set / positionals)
+      so flag order stops counting as an error. — **2026-08-15 14:45**
+- [x] `eval/contamination.py` — audit across 4 leak channels (PROMPT_VERBATIM,
+      PROMPT_NEAR_DUP, TEMPLATE_SHARED, TARGET_OVERLAP). Independently reproduces
+      A1–A3. Surfaced a finding the manual audit missed: `venvy current` is 225 of
+      1500 venvy rows (15% of the dataset is one command). — **2026-08-15 14:40**
+- [x] `eval/splits.py` — split by *target command*, not by row; stratified by
+      category; asserts zero command overlap. — **2026-08-15 14:47**
+- [x] `eval/metrics.py` — exact + normalized + functional, always reported together.
+      `-d`/`-a`/`-i`/`-t` deliberately NOT treated as ignorable. — **2026-08-15 14:46**
+- [x] `eval/backends.py` — llama-server / llama-cli / llama-cpp-python / transformers
+      / replay behind one interface, so baselines and fine-tunes share a code path.
+      — **2026-08-15 15:05**
+- [x] `data/docker_test_handwritten.jsonl` — 116 hand-written held-out prompts across
+      9 phrasing styles (telegraphic, conversational, question, typo, jargon, minimal,
+      polite, compositional, unseen-flag). Audits CLEAN: 0 verbatim, 0 near-dup,
+      0 shared-template. 57% target overlap, disclosed. — **2026-08-15 14:52**
+- [x] `eval/run_eval.py` — replaces the legacy script. Contamination gate runs and
+      prints *above* the accuracy; `--strict` refuses to report a number on a
+      contaminated pair. — **2026-08-15 15:10**
+- [x] `tests/test_eval_harness.py` — 36 tests, all passing. Caught two genuine parser
+      bugs: `-it` failed to expand, and `docker run -t nginx` parsed as `-t=nginx`
+      with no image, both from `-t` being globally value-consuming when it is only
+      that under `build`. Would have silently mis-scored every exec/interactive-run
+      example. — **2026-08-15 15:02**
+- [x] `docs/EVAL_METHODOLOGY.md` — what was wrong, how it was found, how it is fixed.
+      §4 (corrected numbers) pending the run. — **2026-08-15 15:00**
+- [x] Re-score Gemma 3 4B docker on the clean set. **94.0% -> 46.6%.**
+      unseen_command 38.0% (n=50), unseen_phrasing 53.0% (n=66). exact == normalized
+      == functional == 46.6%, so the drop is contamination, not scoring.
+      `results/gemma3_4b_docker_summary.json`. — **2026-08-15 15:32**
+- [x] Publish corrected numbers in README + `docs/EVAL_METHODOLOGY.md` §4, with the
+      legacy figures kept alongside rather than deleted. Withdrew the venvy 83% and
+      the 1B-vs-4B comparison. — **2026-08-15 15:40**
+- [!] Gemma 3 1B docker — **weights not available locally.** `models/` holds only
+      `docker_gemma3_4b_q4km.gguf` and `venvy_gemma3_q4km.gguf`. Needed to settle
+      whether the "capacity ceiling" was capacity or dataset. Ask: HuggingFace? Drive?
+      Old Colab session?
+
+### Findings from the corrected run — 2026-08-15
+
+Category ranking **inverted** versus the contaminated eval. Survivors are the
+categories with fewest distinct commands (volume 100%, system 68.8%); collapses are
+the flag-composition-heavy ones (run 20.7%, exec 9.1%).
+
+Failure modes over 62 misses: 44 right-subcommand/wrong-flags, 18 wrong subcommand,
+0 malformed. The model always emits plausible Docker; it cannot compose flags.
+
+Sharpest single result: **6 of the 10 `exec` misses are a dropped `-it`.** Training
+phrases exec-shell requests with a fixed trigger vocabulary ("open shell in container
+X", "run bash in X"); the held-out prompts say "drop me into", "poke around inside",
+"attach a terminal to". The model learned which lexical triggers precede `-it`, not
+that interactive intent requires it.
+
+**Implication that changes the plan:** the dataset is the bottleneck, not model size.
+594 examples over 298 mostly single-flag commands cannot teach flag composition. The
+1B-vs-4B "capacity ceiling" was probably dataset-imposed, and the 4B hit the same wall
+unnoticed behind the contaminated metric. Swapping to a newer base model without
+fixing the dataset would repeat the original mistake with fresher weights.
+
+### Infrastructure notes from this session
+
+- `llama-cpp-python` has no Windows wheel for Python 3.9; building needs MSVC.
+  Worked around with the official prebuilt llama.cpp release (b10437, CPU x64,
+  18 MB) in `vendor/` (gitignored).
+- `llama-cli` in b10437 **ignores `-no-cnv`** and drops into an interactive chat TUI,
+  which silently breaks subprocess scraping. Hence `llama-server` + HTTP as the
+  default backend: model loads once, returns JSON, and supplies per-token logprobs
+  (which Milestone 3 needs anyway).
+- Local host: 8 GB RAM, CPU-only. 4B Q4_K_M runs at ~4.2 tok/s, ~5.8s per example.
+  116 examples ≈ 11 minutes. Workable but not for repeated sweeps — baselines
+  (M2) should run on Colab GPU.
 
 ---
 

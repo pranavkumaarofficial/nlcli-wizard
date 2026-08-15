@@ -50,6 +50,16 @@ imatrix_data.txt
 /unsloth_compiled_cache/
 wandb/
 
+# Downloaded third-party binaries (llama.cpp release builds, etc.).
+# Reproduced by the download step in docs/EVAL_METHODOLOGY.md, never committed.
+/vendor/
+
+# --- Evaluation output ---
+# results/*_summary.json IS tracked: it is the published record of a run.
+# The per-generation JSONL and raw console logs are not.
+results/*_generations.jsonl
+*.log
+
 # --- Caches ---
 .cache/
 .pytest_cache/

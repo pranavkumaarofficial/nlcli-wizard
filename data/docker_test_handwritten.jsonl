@@ -1,0 +1,116 @@
+{"instruction": "Translate to docker command: nginx, port 8080, detached", "command": "docker run -d -p 8080:80 nginx", "style": "telegraphic"}
+{"instruction": "Translate to docker command: i need a throwaway ubuntu shell", "command": "docker run --rm -it ubuntu bash", "style": "conversational"}
+{"instruction": "Translate to docker command: get postgres up with password hunter2 on the usual port", "command": "docker run -e POSTGRES_PASSWORD=hunter2 -p 5432:5432 postgres", "style": "conversational"}
+{"instruction": "Translate to docker command: spin up redis but make sure it comes back if it crashes", "command": "docker run -d --restart on-failure redis", "style": "conversational"}
+{"instruction": "Translate to docker command: run alpine and delete it when im done", "command": "docker run --rm alpine", "style": "typo"}
+{"instruction": "Translate to docker command: start mongo in the background, call it mongodb", "command": "docker run -d --name mongodb mongo", "style": "conversational"}
+{"instruction": "Translate to docker command: how do i run node with the current folder mounted at /app", "command": "docker run -v $(pwd):/app node", "style": "question"}
+{"instruction": "Translate to docker command: launch nginx bound to 3000 on the host", "command": "docker run -p 3000:80 nginx", "style": "jargon"}
+{"instruction": "Translate to docker command: container from the python image, interactive, remove on exit", "command": "docker run --rm -it python", "style": "telegraphic"}
+{"instruction": "Translate to docker command: mysql, root pw admin, persist the data to a named volume", "command": "docker run -e MYSQL_ROOT_PASSWORD=admin -v mysql-data:/var/lib/mysql mysql", "style": "telegraphic"}
+{"instruction": "Translate to docker command: run busybox using the host's network stack", "command": "docker run --network host busybox", "style": "jargon"}
+{"instruction": "Translate to docker command: start a container from ubuntu capped at 512m of memory", "command": "docker run --memory 512m ubuntu", "style": "unseen-flag"}
+{"instruction": "Translate to docker command: run nginx as uid 1000", "command": "docker run -u 1000 nginx", "style": "unseen-flag"}
+{"instruction": "Translate to docker command: postgres, detached, restart unless i stop it myself", "command": "docker run -d --restart unless-stopped postgres", "style": "conversational"}
+{"instruction": "Translate to docker command: give me an interactive alpine box", "command": "docker run -it alpine sh", "style": "conversational"}
+{"instruction": "Translate to docker command: run the redis image and map 6380 on my machine to 6379 inside", "command": "docker run -p 6380:6379 redis", "style": "verbose"}
+{"instruction": "Translate to docker command: node app, port 3000, production env, background", "command": "docker run -d -p 3000:3000 -e NODE_ENV=production node", "style": "telegraphic"}
+{"instruction": "Translate to docker command: launch postgres named maindb with the data on a volume called pgdata", "command": "docker run --name maindb -v pgdata:/var/lib/postgresql/data postgres", "style": "verbose"}
+{"instruction": "Translate to docker command: put nginx on the mynet network", "command": "docker run --network mynet nginx", "style": "conversational"}
+{"instruction": "Translate to docker command: run mysql with an always restart policy in the background", "command": "docker run -d --restart always mysql", "style": "verbose"}
+{"instruction": "Translate to docker command: temporary alpine container, interactive shell, gone after i exit", "command": "docker run --rm -it alpine sh", "style": "verbose"}
+{"instruction": "Translate to docker command: nginx serving files out of /srv/www", "command": "docker run -v /srv/www:/usr/share/nginx/html nginx", "style": "conversational"}
+{"instruction": "Translate to docker command: drop me into a shell on the api container", "command": "docker exec -it api bash", "style": "conversational"}
+{"instruction": "Translate to docker command: i need to poke around inside web", "command": "docker exec -it web bash", "style": "conversational"}
+{"instruction": "Translate to docker command: whats in /var/log on the db container", "command": "docker exec -w /var/log db ls", "style": "typo"}
+{"instruction": "Translate to docker command: check free disk space inside worker", "command": "docker exec worker df -h", "style": "conversational"}
+{"instruction": "Translate to docker command: run sh in the cache container", "command": "docker exec -it cache sh", "style": "direct"}
+{"instruction": "Translate to docker command: exec into frontend", "command": "docker exec -it frontend bash", "style": "jargon"}
+{"instruction": "Translate to docker command: show me the working directory inside the app container", "command": "docker exec app pwd", "style": "verbose"}
+{"instruction": "Translate to docker command: list whats in /etc on the proxy container", "command": "docker exec -w /etc proxy ls", "style": "typo"}
+{"instruction": "Translate to docker command: get a bash prompt in backend", "command": "docker exec -it backend bash", "style": "conversational"}
+{"instruction": "Translate to docker command: build whatever is in this folder", "command": "docker build .", "style": "conversational"}
+{"instruction": "Translate to docker command: build it and tag it myapp:3.0", "command": "docker build -t myapp:3.0 .", "style": "direct"}
+{"instruction": "Translate to docker command: build using the prod dockerfile", "command": "docker build -f Dockerfile.prod .", "style": "conversational"}
+{"instruction": "Translate to docker command: fresh build, ignore the cache, tag it api", "command": "docker build --no-cache -t api .", "style": "telegraphic"}
+{"instruction": "Translate to docker command: build passing VERSION=2.1 as a build arg", "command": "docker build --build-arg VERSION=2.1 .", "style": "jargon"}
+{"instruction": "Translate to docker command: make an image called worker tagged dev from here", "command": "docker build -t worker:dev .", "style": "conversational"}
+{"instruction": "Translate to docker command: build from Dockerfile.test in the current context", "command": "docker build -f Dockerfile.test .", "style": "jargon"}
+{"instruction": "Translate to docker command: rebuild backend without any cached layers", "command": "docker build --no-cache -t backend .", "style": "jargon"}
+{"instruction": "Translate to docker command: what containers are running", "command": "docker ps", "style": "question"}
+{"instruction": "Translate to docker command: show me everything, even the dead ones", "command": "docker ps -a", "style": "conversational"}
+{"instruction": "Translate to docker command: just the container ids please", "command": "docker ps -q", "style": "conversational"}
+{"instruction": "Translate to docker command: what images do i have locally", "command": "docker images", "style": "question"}
+{"instruction": "Translate to docker command: tail the logs on api and keep following", "command": "docker logs -f api", "style": "jargon"}
+{"instruction": "Translate to docker command: last 50 lines of the web logs", "command": "docker logs --tail 50 web", "style": "telegraphic"}
+{"instruction": "Translate to docker command: how much cpu is everything using", "command": "docker stats", "style": "question"}
+{"instruction": "Translate to docker command: what processes are running inside db", "command": "docker top db", "style": "question"}
+{"instruction": "Translate to docker command: give me the full config of the web container", "command": "docker inspect web", "style": "conversational"}
+{"instruction": "Translate to docker command: which containers were started most recently, show me the last 3", "command": "docker ps -n 3", "style": "verbose"}
+{"instruction": "Translate to docker command: containers plus how much space theyre taking", "command": "docker ps -s", "style": "typo"}
+{"instruction": "Translate to docker command: just image ids, nothing else", "command": "docker images -q", "style": "conversational"}
+{"instruction": "Translate to docker command: logs for the cache container", "command": "docker logs cache", "style": "telegraphic"}
+{"instruction": "Translate to docker command: watch the resource usage of the api container specifically", "command": "docker stats api", "style": "verbose"}
+{"instruction": "Translate to docker command: dump the inspect output for the pgdata volume", "command": "docker volume inspect pgdata", "style": "jargon"}
+{"instruction": "Translate to docker command: bring the whole stack up in the background", "command": "docker-compose up -d", "style": "conversational"}
+{"instruction": "Translate to docker command: tear it all down and nuke the volumes", "command": "docker-compose down -v", "style": "conversational"}
+{"instruction": "Translate to docker command: restart everything in compose", "command": "docker-compose restart", "style": "conversational"}
+{"instruction": "Translate to docker command: follow the logs for the worker service", "command": "docker-compose logs -f worker", "style": "direct"}
+{"instruction": "Translate to docker command: i want 4 copies of the api service running", "command": "docker-compose up -d --scale api=4", "style": "conversational"}
+{"instruction": "Translate to docker command: shell into the db service", "command": "docker-compose exec db bash", "style": "jargon"}
+{"instruction": "Translate to docker command: whats the status of my compose services", "command": "docker-compose ps", "style": "typo"}
+{"instruction": "Translate to docker command: rebuild the compose images from scratch", "command": "docker-compose build --no-cache", "style": "conversational"}
+{"instruction": "Translate to docker command: stop the compose stack but leave the volumes alone", "command": "docker-compose down", "style": "verbose"}
+{"instruction": "Translate to docker command: pull down fresh images for all the services", "command": "docker-compose pull", "style": "conversational"}
+{"instruction": "Translate to docker command: run 2 workers instead of one", "command": "docker-compose up -d --scale worker=2", "style": "conversational"}
+{"instruction": "Translate to docker command: show me the logs from the web service", "command": "docker-compose logs web", "style": "direct"}
+{"instruction": "Translate to docker command: halt all the compose services without removing them", "command": "docker-compose stop", "style": "verbose"}
+{"instruction": "Translate to docker command: start the compose services back up again", "command": "docker-compose start", "style": "conversational"}
+{"instruction": "Translate to docker command: make a network called devnet", "command": "docker network create devnet", "style": "conversational"}
+{"instruction": "Translate to docker command: what networks exist", "command": "docker network ls", "style": "question"}
+{"instruction": "Translate to docker command: hook the api container up to devnet", "command": "docker network connect devnet api", "style": "conversational"}
+{"instruction": "Translate to docker command: take web off the appnet network", "command": "docker network disconnect appnet web", "style": "conversational"}
+{"instruction": "Translate to docker command: get rid of networks nobodys using", "command": "docker network prune", "style": "typo"}
+{"instruction": "Translate to docker command: details on the devnet network", "command": "docker network inspect devnet", "style": "telegraphic"}
+{"instruction": "Translate to docker command: delete the network called staging-net", "command": "docker network rm staging-net", "style": "direct"}
+{"instruction": "Translate to docker command: put the db container on the backend-net network", "command": "docker network connect backend-net db", "style": "conversational"}
+{"instruction": "Translate to docker command: create a volume for pgdata", "command": "docker volume create pgdata", "style": "direct"}
+{"instruction": "Translate to docker command: list my volumes", "command": "docker volume ls", "style": "direct"}
+{"instruction": "Translate to docker command: delete the volumes nothing is using", "command": "docker volume prune", "style": "conversational"}
+{"instruction": "Translate to docker command: show me details on the cache-vol volume", "command": "docker volume inspect cache-vol", "style": "direct"}
+{"instruction": "Translate to docker command: drop the volume named old-data", "command": "docker volume rm old-data", "style": "jargon"}
+{"instruction": "Translate to docker command: new volume, call it uploads", "command": "docker volume create uploads", "style": "telegraphic"}
+{"instruction": "Translate to docker command: how much disk is docker eating", "command": "docker system df", "style": "question"}
+{"instruction": "Translate to docker command: clean up everything unused", "command": "docker system prune", "style": "conversational"}
+{"instruction": "Translate to docker command: nuke all the unused images too, not just dangling ones", "command": "docker system prune -a", "style": "verbose"}
+{"instruction": "Translate to docker command: kill the web container", "command": "docker stop web", "style": "conversational"}
+{"instruction": "Translate to docker command: what version of docker am i on", "command": "docker version", "style": "question"}
+{"instruction": "Translate to docker command: remove the api container, force it", "command": "docker rm -f api", "style": "telegraphic"}
+{"instruction": "Translate to docker command: get rid of stopped containers", "command": "docker container prune", "style": "conversational"}
+{"instruction": "Translate to docker command: delete dangling images", "command": "docker image prune", "style": "jargon"}
+{"instruction": "Translate to docker command: shut down the worker container", "command": "docker stop worker", "style": "conversational"}
+{"instruction": "Translate to docker command: tell me about this docker install", "command": "docker info", "style": "conversational"}
+{"instruction": "Translate to docker command: wipe every unused image off the machine", "command": "docker image prune -a", "style": "verbose"}
+{"instruction": "Translate to docker command: delete the container named old-api", "command": "docker rm old-api", "style": "direct"}
+{"instruction": "Translate to docker command: stop the container called frontend", "command": "docker stop frontend", "style": "direct"}
+{"instruction": "Translate to docker command: i want a redis instance i can reach on 6379 that survives reboots", "command": "docker run -d -p 6379:6379 --restart always redis", "style": "compositional"}
+{"instruction": "Translate to docker command: nginx on 8080, named proxy, restart always, in the background", "command": "docker run -d -p 8080:80 --name proxy --restart always nginx", "style": "compositional"}
+{"instruction": "Translate to docker command: postgres called pgmain, port 5432, password secret, data on the pgdata volume, detached", "command": "docker run -d -p 5432:5432 --name pgmain -e POSTGRES_PASSWORD=secret -v pgdata:/var/lib/postgresql/data postgres", "style": "compositional"}
+{"instruction": "Translate to docker command: build myapp version 4 from the staging dockerfile skipping cache", "command": "docker build --no-cache -f Dockerfile.staging -t myapp:4.0 .", "style": "compositional"}
+{"instruction": "Translate to docker command: throwaway node container on the devnet network with the current dir mounted", "command": "docker run --rm -v $(pwd):/app --network devnet node", "style": "compositional"}
+{"instruction": "Translate to docker command: mongo named mongodb on 27017 that restarts on failure, detached", "command": "docker run -d -p 27017:27017 --name mongodb --restart on-failure mongo", "style": "compositional"}
+{"instruction": "Translate to docker command: mysql on 3307, root password rootpass, named mysqldb, background", "command": "docker run -d -p 3307:3306 -e MYSQL_ROOT_PASSWORD=rootpass --name mysqldb mysql", "style": "compositional"}
+{"instruction": "Translate to docker command: interactive ubuntu on the appnet network that cleans itself up", "command": "docker run --rm -it --network appnet ubuntu bash", "style": "compositional"}
+{"instruction": "Translate to docker command: could you show me the containers that are currently up", "command": "docker ps", "style": "polite"}
+{"instruction": "Translate to docker command: please remove all the unused docker data", "command": "docker system prune", "style": "polite"}
+{"instruction": "Translate to docker command: would you list the docker networks for me", "command": "docker network ls", "style": "polite"}
+{"instruction": "Translate to docker command: ps", "command": "docker ps", "style": "minimal"}
+{"instruction": "Translate to docker command: images", "command": "docker images", "style": "minimal"}
+{"instruction": "Translate to docker command: prune", "command": "docker system prune", "style": "minimal"}
+{"instruction": "Translate to docker command: logs api", "command": "docker logs api", "style": "minimal"}
+{"instruction": "Translate to docker command: compose up detached", "command": "docker-compose up -d", "style": "minimal"}
+{"instruction": "Translate to docker command: docker containers that arent running anymore", "command": "docker ps -a", "style": "typo"}
+{"instruction": "Translate to docker command: i cant remember the flag to see stopped containers", "command": "docker ps -a", "style": "conversational"}
+{"instruction": "Translate to docker command: whats taking up all my disk space in docker", "command": "docker system df", "style": "typo"}
+{"instruction": "Translate to docker command: start a shell inside the running database container", "command": "docker exec -it db bash", "style": "verbose"}
+{"instruction": "Translate to docker command: attach a terminal to the cache container", "command": "docker exec -it cache bash", "style": "jargon"}

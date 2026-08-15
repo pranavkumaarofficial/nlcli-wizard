@@ -24,43 +24,54 @@ docker -w "run nginx on port 8080 with production env in background"
 
 ## Results: Docker CLI translation
 
-> ### ⚠️ These numbers are under re-audit and should not be cited
->
-> An internal audit on 2026-08-15 found that the evaluation harness scored the model
-> on the last 100 lines of the same JSONL file it was trained on. The training
-> notebook used a random 90/10 split of that file, so roughly 90 of the 100
-> evaluation examples were in the training set. **The 94% and 83% figures below
-> measure training-set recall, not translation accuracy.**
->
-> The venvy set is worse: 1,500 rows contain only 230 unique instructions, and
-> 95 of 100 evaluation prompts appear verbatim in training.
->
-> A contamination-free test set and a corrected harness are being built in
-> [`eval/`](eval/). Corrected numbers, the methodology, and a baseline comparison
-> will replace this section. Progress: [`notes/PROGRESS.md`](notes/PROGRESS.md).
+> **This project previously published 94% Docker accuracy. That number was wrong.**
+> It was measured on training data. The corrected figure is 46.6%. The full account
+> is in [`docs/EVAL_METHODOLOGY.md`](docs/EVAL_METHODOLOGY.md) — what broke, how it
+> was found, and what replaced it. Both numbers are kept side by side below rather
+> than the old one being quietly deleted.
 
-Trained on 594 Docker command examples across 8 categories (run, build, exec, compose, network, volume, system, ps/images).
+Gemma 3 4B, QLoRA fine-tuned on 594 templated Docker examples, Q4_K_M on CPU.
+Evaluated on 116 hand-written held-out prompts with zero prompt overlap with training
+([`data/docker_test_handwritten.jsonl`](data/docker_test_handwritten.jsonl)).
 
-![1B vs 4B per-category accuracy](docs/1b_vs_4b_comparison.png)
+| | Legacy harness | Corrected harness |
+|--|--|--|
+| Overall | 94.0% | **46.6%** |
+| Unseen command | — | 38.0% (n=50) |
+| Unseen phrasing, known command | — | 53.0% (n=66) |
+| Eval set | last 100 lines of the training file | 116 hand-written held-out prompts |
+| Prompt leakage | ~90 of 100 rows in train | 0 |
+| Metric | exact string match | exact + flag-order-normalized + functional |
 
-| | Gemma 3 1B | Gemma 3 4B |
-|--|-----------|-----------|
-| Accuracy | 73-76% (ceiling after 3 runs) | **94%** (first try) |
-| Model size | 810 MB | ~2.5 GB |
-| Inference (CPU) | ~5s | ~12s |
-| Training time | 16 min on free Colab T4 | ~45 min on free Colab T4 |
-| Trainable params | 13M / 1B (1.29%) | ~50M / 4B (~1.3%) |
+Exact, normalized, and functional scoring all returned **46.6%** — the model never
+lost a point to flag ordering. The gap is contamination, not scoring.
 
-The 1B model hits a capacity ceiling at 73-76% -- fixing one command category causes regressions in others (the "whack-a-mole effect"). The 4B model holds all flag patterns simultaneously without trading accuracy between categories. Full analysis in the [Reddit discussion](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/).
+### Per-category
 
-### Per-category breakdown (4B)
+| Category | n | Corrected | Legacy claim |
+|----------|---|-----------|--------------|
+| volume | 7 | 100.0% | 100% |
+| system | 16 | 68.8% | 100% |
+| ps/images | 20 | 60.0% | 87.5% |
+| build | 9 | 55.6% | 90.0% |
+| network | 9 | 55.6% | 100% |
+| compose | 15 | 46.7% | 100% |
+| run | 29 | 20.7% | 96.2% |
+| exec | 11 | 9.1% | 84.6% |
 
-| Category | Accuracy | Category | Accuracy |
-|----------|----------|----------|----------|
-| run | 96.2% | network | 100% |
-| build | 90.0% | volume | 100% |
-| compose | 100% | system | 100% |
-| exec | 84.6% | ps/images | 87.5% |
+The ranking inverted. Categories with few distinct commands survive; the
+flag-composition-heavy ones collapse.
+
+Of 62 misses, 44 use the right subcommand with wrong flags, 18 pick the wrong
+subcommand, and none are malformed. Six of the ten `exec` misses are a single dropped
+`-it`: the model learned which phrasings precede `-it`, not that interactive intent
+requires it. That is memorization of surface form — and it is what the 94% measured.
+
+**Status of the 1B vs 4B comparison:** withdrawn pending re-measurement. The claimed
+"capacity ceiling" at 73–76% was attributed to the 1B model's parameter count. The
+corrected results suggest the ceiling was imposed by the dataset — 594 examples over
+298 mostly single-flag commands cannot teach flag composition — and that the 4B model
+hit the same wall unnoticed behind a contaminated metric.
 
 ## Quick start
 
@@ -78,14 +89,13 @@ pip install -e .
 # Translate
 python -m nlcli_wizard.cli translate --cli-tool docker "run nginx on port 8080 in background"
 # Command: docker run -d -p 8080:80 nginx
-# Confidence: 95%
 # Runs nginx container in detached mode, mapping port 8080 to 80
-
-python -m nlcli_wizard.cli translate --cli-tool docker "stop container web"
-# Command: docker stop web
-# Confidence: 95%
-# Stops web container
 ```
+
+> **Note on the `CONFIDENCE` field.** The model emits one, but it is meaningless: the
+> dataset generator filled it with `random.uniform(0.90, 0.97)`, so the model was
+> trained to predict a random number. It is being replaced with mean token logprob
+> (see [`notes/PROGRESS.md`](notes/PROGRESS.md), Milestone 3). Do not rely on it.
 
 ### Train your own model
 
@@ -100,7 +110,7 @@ python -m nlcli_wizard.dataset_docker  # generates data/docker_training.jsonl
 # 2. Open the Colab notebook and train (free T4 GPU)
 # 3. Download the GGUF model and place in models/
 # 4. Run evaluation
-python test/evaluate_docker.py
+python -m eval.run_eval --model models/docker_gemma3_4b_q4km.gguf --template gemma3
 ```
 
 ## How it works
@@ -144,10 +154,15 @@ nlcli-wizard/
     dataset_docker.py   # Docker dataset generator (594 examples)
   training/
     nlcli_wizard_training_[PUBLIC].ipynb   # Colab training notebook
-  test/
-    evaluate_docker.py  # Per-category accuracy evaluation
+  eval/
+    contamination.py    # Train/test leakage auditing
+    splits.py           # Command-level (non-leaking) splits
+    metrics.py          # exact / normalized / functional scoring
+    run_eval.py         # Evaluation entry point
+  tests/                # pytest suite for the harness
   data/
-    docker_training.jsonl   # Generated training data
+    docker_training.jsonl        # Generated training data
+    docker_test_handwritten.jsonl # Hand-written held-out set (116)
   models/
     *.gguf              # Quantized models (gitignored)
   scripts/
@@ -161,15 +176,15 @@ nlcli-wizard/
 - **Base model**: Gemma 3 4B-Instruct (via Unsloth)
 - **Training**: QLoRA with Unsloth on free Colab T4
 - **Quantization**: GGUF Q4_K_M with importance matrix via llama.cpp
-- **Inference**: llama-cpp-python, CPU, 4 threads
+- **Inference**: llama.cpp (llama-server / llama-cpp-python), CPU, 4 threads
 - **Output format**: Structured COMMAND/CONFIDENCE/EXPLANATION
 
 ## Supported tools
 
 | Tool | Dataset | Model | Accuracy | Status |
 |------|---------|-------|----------|--------|
-| Docker | 594 examples | Gemma 3 4B | 94% | Available |
-| [Venvy](https://github.com/pranavkumaarofficial/venvy) | 1,500 examples | Gemma 3 1B | 83% | Available |
+| Docker | 594 rows / 298 unique cmds | Gemma 3 4B | 46.6% | Available |
+| [Venvy](https://github.com/pranavkumaarofficial/venvy) | 1,500 rows / 230 unique | Gemma 3 1B | withdrawn | Needs re-eval |
 | Kubernetes | -- | -- | -- | Planned |
 | Git | -- | -- | -- | Planned |
 
@@ -183,14 +198,21 @@ The first tool integrated was [venvy](https://github.com/pranavkumaarofficial/ve
 "clean up old venvs"                   ->  venvy cleanup --days 90
 ```
 
-Trained on Gemma 3 1B with 1,500 verified examples. 83% accuracy. This was the proof-of-concept that validated the architecture before moving to Docker and 4B.
+Trained on Gemma 3 1B. The previously published 83% accuracy is **withdrawn**: the
+venvy dataset has 1,500 rows but only 230 unique instructions (6.5x duplication), and
+95 of the 100 evaluation prompts appeared verbatim in training. The figure measured
+memorization recall, and the model got 17% of memorized items wrong even so. A
+venvy equivalent of `data/docker_test_handwritten.jsonl` is needed before any number
+is republished. See [`docs/EVAL_METHODOLOGY.md`](docs/EVAL_METHODOLOGY.md).
 
 ## Roadmap
 
-- [x] Venvy proof-of-concept (Gemma 3 1B, 83% accuracy)
-- [x] Docker support (Gemma 3 4B, 94% accuracy)
-- [x] 1B vs 4B comparison with per-category analysis
+- [x] Venvy proof-of-concept (Gemma 3 1B) — accuracy withdrawn, needs a clean test set
+- [x] Docker support (Gemma 3 4B) — 46.6% on the corrected harness
+- [x] 1B vs 4B comparison — withdrawn, see docs/EVAL_METHODOLOGY.md
 - [x] Training notebook with step-by-step explanations
+- [x] Contamination-free eval harness (`eval/`) + methodology writeup
+- [ ] Baselines: base model zero-shot / few-shot vs fine-tuned
 - [ ] Auto-ingestion pipeline: `--help` docs in, training data out, weights packaged
 - [ ] Error correction feedback loop (command fails -> suggest fix)
 - [ ] PyPI package release
