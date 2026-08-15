@@ -194,8 +194,29 @@ distribution still gives ~51%, not 94%. The drop is real, not test difficulty.
 - [x] `tests/test_dataset_v2.py` — 14 tests. Suite now 50 passing. — **2026-08-15 16:45**
 - [x] v2 drops the fabricated `CONFIDENCE` field entirely (was
       `random.uniform(0.90, 0.97)`). Asserted in tests. — **2026-08-15 16:45**
-- [ ] Retrain on v2 and measure against the same held-out set.
-- [ ] Ablation table: v1 vs v2 dataset, holding model and recipe fixed.
+- [x] `training/build_notebook.py` -> `training/nlcli_wizard_train_v2.ipynb`
+      (36 cells). Generated, not hand-edited, so cells stay diffable and the JSON
+      stays valid. — **2026-08-15 17:10**
+      - imports `eval/` from the clone instead of reimplementing scoring in a cell
+        (the old notebook's private copy of the eval logic is how the contaminated
+        metric survived nine months)
+      - contamination gate **raises** before training if the train file leaks
+      - baselines (zero-shot / +system / 8-shot) run BEFORE training, same scorer
+      - command-level validation split via `eval/splits.py`
+      - `train_on_responses_only`, with turn markers detected from the tokenizer
+        rather than hardcoded, plus a cell that decodes the mask and asserts the
+        instruction is excluded before spending 25 min on it
+      - base model held at Gemma 3 4B so the v1->v2 ablation moves one variable
+      - emits the ablation table and a per-flag-count delta vs the v1 run
+- [x] Static verification of the notebook (all that is possible without a GPU):
+      valid JSON, every code cell parses, all 10 repo imports resolve, the
+      command-level split on v2 gives 0 command overlap (4766/234), and the
+      per-flag-count reporting cell reproduces the v1 numbers exactly when run
+      against the v1 generations. — **2026-08-15 17:20**
+- [ ] **RUN IT.** Requires GPU + Google auth; cannot be executed from this machine
+      (Python 3.9 only, no general-purpose WSL distro, and colab-cli needs
+      interactive OAuth). Blocked on Pranav.
+- [ ] Ablation table filled in: v1 vs v2 dataset, model and recipe held fixed.
 
 Known remaining weakness: `volume` saturates at 71 unique examples and `run` is 44%
 of the mix. `run` is deliberate — it is the hardest, most compositional category and
