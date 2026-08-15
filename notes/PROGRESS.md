@@ -148,6 +148,59 @@ fixing the dataset would repeat the original mistake with fresher weights.
 
 ---
 
+## Milestone 1.5 — Dataset v2 (composition coverage)  ← ACTIVE
+
+Root cause of the 46.6%, quantified from the corrected run:
+
+| flags in target | accuracy | share of v1 training data |
+|---|---|---|
+| 0 | 74.0% | 35.4% |
+| 1 | 47.1% | 52.0% |
+| 2 | **5.0%** | 12.0% |
+| 3+ | **0.0%** | **0.7%** |
+
+Accuracy collapses exactly where coverage ends. v1 has 24 distinct flags but only
+**17 distinct flag pairs**, 47 occurrences of which are the trivial `-i`+`-t` bundle.
+`--detach`+`--publish` appears 3 times. The model was asked to compose flags it had
+never seen composed.
+
+Sanity check: reweighting the per-flag-count accuracies to v1's own (easier)
+distribution still gives ~51%, not 94%. The drop is real, not test difficulty.
+
+- [x] `nlcli_wizard/dataset_v2.py` — composition-first generator. Flags declared as
+      specs with many intent-based phrasings each; examples built by sampling flag
+      *subsets*; sentence order and connectives randomised. — **2026-08-15 16:20**
+- [x] `data/docker_train_v2.jsonl` — 5,000 rows. — **2026-08-15 16:35**
+
+      | metric | v1 | v2 |
+      |---|---|---|
+      | rows | 594 | 5,000 |
+      | unique prompts | 592 | 5,000 |
+      | unique commands | 298 | 3,188 |
+      | multi-flag share | 12.6% | **52.4%** |
+      | distinct flag pairs | 17 | **72** |
+      | 3+ flag examples | 4 | ~700 |
+
+- [x] Generation-time exclusion of the held-out set. The first v2 build leaked
+      **12 test prompts verbatim** — same author wrote the test set and the
+      generator phrasings and reached for the same words twice. Care does not
+      prevent this; a blocklist does. Now `--exclude` defaults to the test set and
+      dedups on the same fingerprint the audit uses. — **2026-08-15 16:30**
+- [x] Four content defects found by sampling and fixed, each with a regression test:
+      doubled conjunctions ("and and"), ports published on non-serving images
+      (`-p 3000:8080 busybox`), env vars from the wrong image
+      (`MONGO_INITDB_ROOT_PASSWORD` on caddy), and build-arg name/value mismatches
+      (`VERSION=production`). — **2026-08-15 16:40**
+- [x] `tests/test_dataset_v2.py` — 14 tests. Suite now 50 passing. — **2026-08-15 16:45**
+- [x] v2 drops the fabricated `CONFIDENCE` field entirely (was
+      `random.uniform(0.90, 0.97)`). Asserted in tests. — **2026-08-15 16:45**
+- [ ] Retrain on v2 and measure against the same held-out set.
+- [ ] Ablation table: v1 vs v2 dataset, holding model and recipe fixed.
+
+Known remaining weakness: `volume` saturates at 71 unique examples and `run` is 44%
+of the mix. `run` is deliberate — it is the hardest, most compositional category and
+scored 20.7%. Volume already scores 100% and needs no more data.
+
 ## Milestone 2 — Baselines
 
 - [ ] Base Gemma 4 E2B, zero-shot
