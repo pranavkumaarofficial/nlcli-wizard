@@ -1,4 +1,10 @@
-# Python
+# ---------------------------------------------------------------------------
+# nlcli-wizard .gitignore
+# Principle: source, datasets, docs, and eval results are tracked.
+# Model weights, build artifacts, and private notes are not.
+# ---------------------------------------------------------------------------
+
+# --- Python ---
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,71 +26,62 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual environments
+# --- Virtual environments ---
 venv/
 env/
 ENV/
-.venv
+.venv/
 
-# Models (too large for git)
+# --- Model weights & training artifacts (host on HuggingFace, not git) ---
 models/
 *.gguf
 *.bin
 *.safetensors
 *.pth
+*.dat
+*_lora/
+*_merged/
+outputs/
+checkpoints/
+imatrix_data.txt
 
-# Model cache
+# --- Vendored / build directories pulled in during training ---
+/llama.cpp/
+/unsloth_compiled_cache/
+wandb/
+
+# --- Caches ---
 .cache/
-
-# Testing
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
 .coverage
 htmlcov/
 .tox/
 
-# IDEs
+# --- Editors / OS ---
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
-
-# OS
 .DS_Store
 Thumbs.db
 
-# Training outputs
-training/outputs/
-training/checkpoints/
-wandb/
-
-# User data
+# --- Local tool state ---
+.claude/settings.local.json
 .nlcli_wizard/
 history.json
-
-# Environment
 .env
 .env.local
 
+# ---------------------------------------------------------------------------
+# Private working notes — drafts, session logs, personal/strategy material.
+# notes/PROGRESS.md is the ONE tracked file in notes/ (see negation below).
+# ---------------------------------------------------------------------------
+notes/*
+!notes/PROGRESS.md
 
-
-# (private docs listed at bottom of file)
-
-# Build artifacts (from Colab - don't commit)
-/llama.cpp/
-/venvy_gemma3_lora/
-/venvy_gemma3_merged/
-venvy_imatrix.dat
-imatrix_data.txt
-/unsloth_compiled_cache/
-
-# Internal notes
-/notes
-
-
-PRE_PUSH_CHECKLIST.md
-
-# Private docs (session notes, drafts, internal plans)
 docs/AGENT_INSTRUCTIONS.md
 docs/CLAUDE_PROJECT_CONTEXT.md
 docs/COMMUNITY_ENGAGEMENT_PLAN.md
@@ -100,4 +97,3 @@ docs/This is brilliant.md
 docs/NEXT_STEPS_DOCKER.md
 docs/VENVY_AUDIT_REPORT.md
 docs/DATASET_GENERATION_REPORT.md
-docs/TECHNICAL_ANALYSIS.md

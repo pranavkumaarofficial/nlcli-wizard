@@ -24,6 +24,21 @@ docker -w "run nginx on port 8080 with production env in background"
 
 ## Results: Docker CLI translation
 
+> ### ⚠️ These numbers are under re-audit and should not be cited
+>
+> An internal audit on 2026-08-15 found that the evaluation harness scored the model
+> on the last 100 lines of the same JSONL file it was trained on. The training
+> notebook used a random 90/10 split of that file, so roughly 90 of the 100
+> evaluation examples were in the training set. **The 94% and 83% figures below
+> measure training-set recall, not translation accuracy.**
+>
+> The venvy set is worse: 1,500 rows contain only 230 unique instructions, and
+> 95 of 100 evaluation prompts appear verbatim in training.
+>
+> A contamination-free test set and a corrected harness are being built in
+> [`eval/`](eval/). Corrected numbers, the methodology, and a baseline comparison
+> will replace this section. Progress: [`notes/PROGRESS.md`](notes/PROGRESS.md).
+
 Trained on 594 Docker command examples across 8 categories (run, build, exec, compose, network, volume, system, ps/images).
 
 ![1B vs 4B per-category accuracy](docs/1b_vs_4b_comparison.png)
