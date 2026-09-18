@@ -1,20 +1,28 @@
+# Mirror of [project.dependencies] in pyproject.toml. Prefer `pip install -e .`.
+#
+# Install llama-cpp-python from the prebuilt CPU wheel index first, or pip will
+# fetch the sdist and compile llama.cpp:
+#   pip install llama-cpp-python \
+#       --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+
 # Core dependencies
 click>=8.0.0,<9.0.0
 rich>=13.0.0,<14.0.0
 
-# Model inference (runtime)
-transformers>=4.46.0,<5.0.0
-torch>=2.0.0,<3.0.0
+# Model inference (runtime). GGUF only; llama.cpp reads the quantized file directly.
 llama-cpp-python>=0.2.0,<1.0.0
-huggingface-hub>=0.20.0,<1.0.0
 
-# Training dependencies (optional - install with pip install -e .[training])
+# Training, plus `run_eval --hf-model` and Hub downloads
+# (optional - install with pip install -e .[training])
 # unsloth>=2025.1
 # peft>=0.13.0,<1.0.0
 # trl>=0.12.0,<1.0.0
 # bitsandbytes>=0.44.0,<1.0.0
 # datasets>=2.14.0,<3.0.0
 # accelerate>=0.25.0,<1.0.0
+# transformers>=4.46.0,<5.0.0
+# torch>=2.0.0,<3.0.0
+# huggingface-hub>=0.20.0,<1.0.0
 
 # Development dependencies (optional - install with pip install -e .[dev])
 # pytest>=7.0.0

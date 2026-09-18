@@ -27,16 +27,20 @@ classifiers = [
 ]
 keywords = ["cli", "natural-language", "llm", "slm", "command-line", "ai", "ml"]
 requires-python = ">=3.8"
+# The inference path is GGUF-only: llama.cpp reads the quantized file directly.
+# torch, transformers and huggingface-hub are not on it, so they are not runtime
+# dependencies. Nothing under nlcli_wizard/ imports them at module load; model.py
+# guards its huggingface_hub import and reports what to install if the download
+# path is used without it.
 dependencies = [
     "click>=8.0.0,<9.0.0",
     "rich>=13.0.0,<14.0.0",
-    "transformers>=4.46.0,<5.0.0",
-    "torch>=2.0.0,<3.0.0",
     "llama-cpp-python>=0.2.0,<1.0.0",
-    "huggingface-hub>=0.20.0,<1.0.0",
 ]
 
 [project.optional-dependencies]
+# Training, plus the two eval paths that are not GGUF: `run_eval --hf-model`
+# (eval.backends.TransformersBackend) and downloading weights from the Hub.
 training = [
     "unsloth>=2025.1",
     "peft>=0.13.0,<1.0.0",
@@ -44,6 +48,9 @@ training = [
     "bitsandbytes>=0.44.0,<1.0.0",
     "datasets>=2.14.0,<3.0.0",
     "accelerate>=0.25.0,<1.0.0",
+    "transformers>=4.46.0,<5.0.0",
+    "torch>=2.0.0,<3.0.0",
+    "huggingface-hub>=0.20.0,<1.0.0",
 ]
 dev = [
     "pytest>=7.0.0",
