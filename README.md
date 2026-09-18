@@ -78,9 +78,17 @@ hit the same wall unnoticed behind a contaminated metric.
 ### Use the pre-trained Docker model
 
 ```bash
-# Clone and install
+# Clone
 git clone https://github.com/pranavkumaarofficial/nlcli-wizard.git
 cd nlcli-wizard
+
+# Install llama-cpp-python from the prebuilt CPU wheel index FIRST.
+# Skipping this makes pip fetch the sdist and compile llama.cpp from source, which
+# needs a C++ toolchain and fails on Windows with a long-path error inside
+# vendor/llama.cpp.
+pip install llama-cpp-python \
+    --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+
 pip install -e .
 
 # Download the 4B GGUF model (~2.5GB) and place in models/
