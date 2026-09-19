@@ -1,3 +1,6 @@
+# Model weights are hosted on HuggingFace, not in git (see .gitignore). Nothing
+# under models/ is tracked except models/readme.md, so the `models/*` LFS rule
+# only ever matched that one text file and made every clone warn:
+#   Encountered 1 file that should have been a pointer, but wasn't: models/readme.md
 *.bin filter=lfs diff=lfs merge=lfs -text
 *.pt filter=lfs diff=lfs merge=lfs -text
-models/* filter=lfs diff=lfs merge=lfs -text
