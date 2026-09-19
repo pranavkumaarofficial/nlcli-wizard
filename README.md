@@ -150,9 +150,18 @@ python -m nlcli_wizard.cli translate --cli-tool docker \
 ```
 
 ```
+Loading model from models\docker_gemma3_4b_q4km.gguf...
+Model loaded successfully!
+Input: run nginx on port 8080 in background
 Command: docker run -d -p 8080:80 nginx
-Runs nginx container in detached mode, mapping port 8080 to 80
+Confidence: 95%
+Runs nginx container in detached mode, mapping port 8080:80, container ID: nginx
 ```
+
+That is the real output, 8.6 s wall on four CPU threads. Two things in it are not
+good: the confidence is a sampled random number (see Limitations) and the
+explanation trails off into nonsense after the first clause. Neither is scored by
+the evaluation, which reads only the `COMMAND:` line.
 
 **The weights are not currently downloadable.** `MODEL_REGISTRY` in
 [`nlcli_wizard/model.py`](nlcli_wizard/model.py) points at
@@ -165,7 +174,7 @@ The harness itself needs no weights:
 
 ```bash
 pip install -e ".[dev]"
-python -m pytest -q tests                                                    # 88 tests
+python -m pytest -q tests                                                    # 90 tests
 python -m eval.contamination --train data/docker_training.jsonl              # self-audit
 python -m eval.contamination --train data/docker_training.jsonl \
                              --test  data/docker_test_handwritten.jsonl
@@ -218,7 +227,7 @@ eval/
   metrics.py          exact / normalized / functional scoring
   backends.py         llama-server, llama-cli, llama-cpp-python, transformers, replay
   run_eval.py         entry point
-tests/                88 tests
+tests/                90 tests
 data/
   docker_training.jsonl           v1, 594 rows / 298 unique commands
   docker_train_v2.jsonl           v2, 5,000 rows / 3,188 unique commands
