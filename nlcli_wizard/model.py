@@ -183,23 +183,25 @@ class ModelManager:
         """
         filename = self._get_model_filename()
 
-        if not HF_HUB_AVAILABLE:
-            raise ImportError(
-                "huggingface-hub is not installed, so the model cannot be "
-                "downloaded automatically.\n" + self._how_to_get_the_model()
-            )
-
-        # Check cache first
+        # Check cache first. A cached file makes every question below moot.
         cached_model = self.cache_dir / filename
         if cached_model.exists():
             print(f"Using cached model: {cached_model}")
             return cached_model
 
-        # Resolve repo from registry
+        # Registry before dependencies: if no model is registered for this tool,
+        # installing huggingface-hub would not help, so saying so first would send
+        # the user down the wrong path.
         if self.cli_tool not in self.MODEL_REGISTRY:
             raise ValueError(
                 f"No model is registered for {self.cli_tool!r}.\n"
                 + self._how_to_get_the_model()
+            )
+
+        if not HF_HUB_AVAILABLE:
+            raise ImportError(
+                "huggingface-hub is not installed, so the model cannot be "
+                "downloaded automatically.\n" + self._how_to_get_the_model()
             )
 
         repo = self.MODEL_REGISTRY[self.cli_tool]["repo"]
