@@ -30,8 +30,32 @@ declared, audited split.
 |------|---------|
 | `splits.py` | Command-level train/test partitioning |
 | `contamination.py` | Overlap and near-duplicate auditing for any train/test pair |
+| `normalize.py` | Structural command parsing: path, flag set, positionals |
 | `metrics.py` | Exact / normalized / functional-equivalence scoring |
+| `backends.py` | One `generate()` interface over llama-server, llama-cli, llama-cpp-python, transformers, replay |
 | `run_eval.py` | Entry point; replaces the legacy script |
+
+## Backends
+
+`--backend llama-server` is the default and the one the published numbers were
+produced with. It loads the model once, returns JSON rather than a TUI that changes
+between llama.cpp releases, and gives per-token logprobs for free.
+
+`--llama-bin` must point at the binary matching `--backend`. Passing `llama-cli.exe`
+while `--backend` is `llama-server` spawns a process that never answers `/health`,
+and the run blocks for the full 180 s startup timeout before failing.
+
+`--backend llama-cpp-python` does not report logprobs unless you pass `--logprobs`.
+The bindings refuse `logprobs=` unless the model was built with `logits_all=True`,
+which keeps the logits for every prompt position: roughly 1 MB per prompt token at
+Gemma 3's 262k vocabulary. Use llama-server if you want confidence numbers.
+
+`--replay` re-scores a recorded run with no inference and no model file. It is the
+fastest way to check a published number:
+
+```bash
+python -m eval.run_eval --replay results/<label>_generations.jsonl
+```
 
 ## Prior art this follows
 

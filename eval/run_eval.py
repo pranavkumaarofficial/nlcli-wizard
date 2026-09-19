@@ -104,12 +104,21 @@ def build_backend(args: argparse.Namespace) -> Backend:
         )
 
     if args.backend == "llama-cpp-python":
+        if args.logprobs:
+            print(
+                "note: --logprobs sets logits_all=True, which keeps the logits for "
+                "every prompt position. On a 262k-token vocabulary that is roughly "
+                "1 MB per prompt token. The llama-server backend returns logprobs "
+                "without this cost.",
+                file=sys.stderr,
+            )
         return LlamaCppPythonBackend(
             args.model,
             template=template,
             n_ctx=args.n_ctx,
             n_threads=args.threads,
             temperature=args.temperature,
+            want_logprobs=args.logprobs,
         )
 
     # Default: llama-server. Loads the model once and returns JSON, so it does not
@@ -156,6 +165,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     gen.add_argument("--threads", type=int, default=4)
     gen.add_argument("--device", default="cuda")
     gen.add_argument("--load-in-4bit", action="store_true")
+    gen.add_argument("--logprobs", action="store_true",
+                     help="record mean token logprob. llama-server does this by "
+                          "default at no cost; on --backend llama-cpp-python it "
+                          "forces logits_all=True and is memory-hungry")
 
     out = ap.add_argument_group("output")
     out.add_argument("--label", default="run", help="name for this run's output files")
