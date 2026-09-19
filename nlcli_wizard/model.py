@@ -31,18 +31,26 @@ class ModelManager:
     - Model caching
     """
 
-    # Model registry: maps CLI tool name to model filename and HuggingFace repo
+    # Model registry: maps CLI tool name to model filename and HuggingFace repo.
+    #
+    # The filename here must be the file the README tells people to download, and
+    # the file the published evaluation was run against. It has been three
+    # different things at once before: the registry said
+    # docker_gemma4_e2b_q4km.gguf, the README said nlcli-gemma3-docker, and the
+    # file that reproduces results/gemma3_4b_docker_summary.json is
+    # docker_gemma3_4b_q4km.gguf. Change these two strings and the README together
+    # or not at all.
     MODEL_REGISTRY = {
         "venvy": {
             "filename": "venvy_gemma3_q4km.gguf",
             "repo": "pranavkumaarofficial/nlcli-gemma3-venvy",
         },
         "docker": {
-            "filename": "docker_gemma4_e2b_q4km.gguf",  # Updated to Gemma 4 E2B
-            "repo": "pranavkumaarofficial/nlcli-gemma4-docker",  # Updated repo
+            "filename": "docker_gemma3_4b_q4km.gguf",
+            "repo": "pranavkumaarofficial/nlcli-gemma3-docker",
         },
     }
-    DEFAULT_FILENAME_PATTERN = "{tool}_gemma4_e2b_q4km.gguf"  # Updated default pattern
+    DEFAULT_FILENAME_PATTERN = "{tool}_gemma3_q4km.gguf"
 
     def __init__(
         self,
@@ -133,8 +141,12 @@ class ModelManager:
         """
         if not LLAMA_CPP_AVAILABLE:
             raise ImportError(
-                "llama-cpp-python not installed. "
-                "Install with: pip install llama-cpp-python"
+                "llama-cpp-python is not installed.\n"
+                "  pip install llama-cpp-python \\\n"
+                "      --extra-index-url "
+                "https://abetlen.github.io/llama-cpp-python/whl/cpu\n"
+                "The wheel index matters: without it pip builds llama.cpp from "
+                "source, which needs a C++ toolchain."
             )
 
         # Determine model path: explicit > local > cache > download
@@ -145,8 +157,8 @@ class ModelManager:
 
         if not self._model_path.exists():
             raise FileNotFoundError(
-                f"Model not found at {self._model_path}. "
-                "Run training pipeline or download pre-trained model."
+                f"No model file at {self._model_path}.\n"
+                + self._how_to_get_the_model()
             )
 
         print(f"Loading model from {self._model_path}...")
@@ -169,13 +181,13 @@ class ModelManager:
         Returns:
             Path to downloaded model file
         """
+        filename = self._get_model_filename()
+
         if not HF_HUB_AVAILABLE:
             raise ImportError(
-                "huggingface-hub not installed. "
-                "Install with: pip install huggingface-hub"
+                "huggingface-hub is not installed, so the model cannot be "
+                "downloaded automatically.\n" + self._how_to_get_the_model()
             )
-
-        filename = self._get_model_filename()
 
         # Check cache first
         cached_model = self.cache_dir / filename
@@ -186,9 +198,8 @@ class ModelManager:
         # Resolve repo from registry
         if self.cli_tool not in self.MODEL_REGISTRY:
             raise ValueError(
-                f"No model configured for '{self.cli_tool}'. "
-                f"Available tools: {list(self.MODEL_REGISTRY.keys())}. "
-                "Provide a local model path with --model-path instead."
+                f"No model is registered for {self.cli_tool!r}.\n"
+                + self._how_to_get_the_model()
             )
 
         repo = self.MODEL_REGISTRY[self.cli_tool]["repo"]
@@ -206,12 +217,55 @@ class ModelManager:
 
         except Exception as e:
             raise RuntimeError(
-                f"Failed to download model: {e}\n"
-                "Make sure you have:\n"
-                f"1. A trained model at {repo} on HuggingFace Hub\n"
-                f"2. Or place {filename} in the models/ directory\n"
-                "3. Or provide a local model path explicitly"
+                f"Could not download {filename} from the HuggingFace repo "
+                f"{repo!r}.\n"
+                f"  underlying error: {type(e).__name__}: {e}\n"
+                + self._how_to_get_the_model()
             )
+
+    def _how_to_get_the_model(self) -> str:
+        """The message a user sees when no weights can be found or fetched.
+
+        Names the repo and the filename, because the previous message named
+        neither in a form anyone could act on, and the repo id has drifted from
+        the README more than once.
+        """
+        filename = self._get_model_filename()
+        repo = (
+            self.MODEL_REGISTRY[self.cli_tool]["repo"]
+            if self.cli_tool in self.MODEL_REGISTRY
+            else None
+        )
+        searched = "\n".join(f"    {d / filename}" for d in self._search_dirs())
+
+        lines = [f"Looked for {filename} in:", searched, "", "To fix this, either:"]
+        if repo:
+            lines += [
+                f"  1. Download {filename} from "
+                f"https://huggingface.co/{repo}/blob/main/{filename}",
+                f"     and put it in models/{filename}",
+                "",
+                "     If that page is 404 or asks you to sign in, the repo is not "
+                "public.",
+                "     The weights are not obtainable any other way; open an issue at",
+                "     https://github.com/pranavkumaarofficial/nlcli-wizard/issues",
+            ]
+        else:
+            lines += [
+                f"  1. Put a GGUF for {self.cli_tool!r} in models/. No HuggingFace "
+                f"repo is registered for it; known tools are "
+                f"{sorted(self.MODEL_REGISTRY)}.",
+            ]
+        lines += [
+            "",
+            "  2. Or point at a file you already have:",
+            f"     nlcli-wizard translate --cli-tool {self.cli_tool} "
+            "--model-path /path/to/model.gguf ...",
+            "",
+            "  3. Or install the download dependency, if that is what is missing:",
+            "     pip install huggingface-hub",
+        ]
+        return "\n".join(lines)
 
     def generate_command(self, natural_language: str) -> str:
         """

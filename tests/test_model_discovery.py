@@ -105,3 +105,59 @@ def test_search_dirs_includes_cwd_models_and_the_cache():
     dirs = [str(d) for d in m._search_dirs()]
     assert dirs[0] == "models"
     assert str(m.cache_dir) in dirs
+
+
+# --- the failure message ------------------------------------------------------
+
+
+@pytest.fixture
+def empty(tmp_path, monkeypatch):
+    m = ModelManager(cli_tool="docker")
+    monkeypatch.setattr(m, "_search_dirs", lambda: [tmp_path / "models"])
+    return m
+
+
+def test_registry_matches_the_file_the_readme_names():
+    """model.py and README.md must agree on one filename and one repo id."""
+    entry = ModelManager.MODEL_REGISTRY["docker"]
+    readme = Path(__file__).resolve().parent.parent / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    assert entry["filename"] in text, entry["filename"]
+    assert entry["repo"] in text, entry["repo"]
+
+
+def test_failure_message_names_the_repo_and_the_filename(empty):
+    msg = empty._how_to_get_the_model()
+    assert ModelManager.MODEL_REGISTRY["docker"]["repo"] in msg
+    assert ModelManager.MODEL_REGISTRY["docker"]["filename"] in msg
+    assert "--model-path" in msg
+
+
+def test_download_failure_names_the_repo(empty, monkeypatch):
+    """A failed download must say which repo it failed against."""
+    import nlcli_wizard.model as model_module
+
+    monkeypatch.setattr(model_module, "HF_HUB_AVAILABLE", True)
+
+    def boom(**kwargs):
+        raise OSError("401 Client Error")
+
+    monkeypatch.setattr(model_module, "hf_hub_download", boom, raising=False)
+
+    with pytest.raises(RuntimeError) as excinfo:
+        empty._download_model()
+
+    msg = str(excinfo.value)
+    assert "pranavkumaarofficial/nlcli-gemma3-docker" in msg
+    assert "docker_gemma3_4b_q4km.gguf" in msg
+    assert "401 Client Error" in msg
+
+
+def test_unregistered_tool_message_lists_the_known_tools(tmp_path, monkeypatch):
+    m = ModelManager(cli_tool="kubectl")
+    monkeypatch.setattr(m, "_search_dirs", lambda: [tmp_path / "models"])
+    with pytest.raises(ValueError) as excinfo:
+        m._download_model()
+    msg = str(excinfo.value)
+    assert "kubectl" in msg
+    assert "docker" in msg and "venvy" in msg
