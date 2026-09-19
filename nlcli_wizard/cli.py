@@ -69,7 +69,12 @@ def translate(cli_tool: str, model_path: str, instruction: tuple):
             console.print("[yellow]Try rephrasing or use standard CLI syntax.[/yellow]")
 
     except Exception as e:
-        console.print(f"[red]Error:[/red] {e}")
+        # markup=False and highlight=False so the guidance in the exception keeps
+        # its own line breaks and indentation. Rich would otherwise re-wrap it and
+        # try to read bracketed text such as ['docker', 'venvy'] as a style tag.
+        console.print("[red]Error:[/red]")
+        console.print(str(e), markup=False, highlight=False, crop=False)
+        raise SystemExit(1)
 
 
 @main.command()

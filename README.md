@@ -91,8 +91,11 @@ pip install llama-cpp-python \
 
 pip install -e .
 
-# Download the 4B GGUF model (~2.5GB) and place in models/
-# (HuggingFace repo: pranavkumaarofficial/nlcli-gemma3-docker)
+# Download docker_gemma3_4b_q4km.gguf (806 MB) into models/
+# from https://huggingface.co/pranavkumaarofficial/nlcli-gemma3-docker
+#
+# That filename and repo id are the ones MODEL_REGISTRY in nlcli_wizard/model.py
+# uses; if the download fails, `translate` prints both.
 
 # Translate
 python -m nlcli_wizard.cli translate --cli-tool docker "run nginx on port 8080 in background"
