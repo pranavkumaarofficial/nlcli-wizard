@@ -1,0 +1,39 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      # The prebuilt CPU wheel index. Without it pip resolves llama-cpp-python to
+      # an sdist and compiles llama.cpp, which takes minutes and needs a toolchain.
+      # No test loads a model, so this only has to import.
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          pip install llama-cpp-python \
+            --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+          pip install -e ".[dev]"
+
+      # The suite must pass without torch, transformers or huggingface-hub, which
+      # .[dev] does not install. tests/test_runtime_deps.py asserts that directly;
+      # this job is the environment that would catch it if that test were removed.
+      - name: pytest
+        run: python -m pytest tests -q
