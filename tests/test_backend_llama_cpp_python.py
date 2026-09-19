@@ -104,3 +104,50 @@ def test_greedy_decoding_uses_top_p_1():
     backend.generate("hi")
     assert backend._llm.calls[0]["top_p"] == 1.0
     assert backend._llm.calls[0]["temperature"] == 0.0
+
+
+# --- the logprob values must survive json.dumps ------------------------------
+
+
+class NotABuiltinFloat:
+    """Stands in for numpy.float32: numeric, but not a `float` subclass."""
+
+    def __init__(self, v):
+        self.v = v
+
+    def __add__(self, other):
+        return NotABuiltinFloat(self.v + float(other))
+
+    __radd__ = __add__
+
+    def __truediv__(self, other):
+        return NotABuiltinFloat(self.v / float(other))
+
+    def __float__(self):
+        return self.v
+
+
+def test_mean_logprob_is_json_serializable(monkeypatch):
+    """llama-cpp-python returns numpy float32, which json.dumps refuses.
+
+    run_eval writes every generation to JSONL, so an unserializable value kills
+    the run after inference has already been paid for.
+    """
+    import json
+
+    class ExoticLlama(FakeLlama):
+        def __call__(self, prompt, **kwargs):
+            out = super().__call__(prompt, **kwargs)
+            if kwargs.get("logprobs"):
+                out["choices"][0]["logprobs"] = {
+                    "token_logprobs": [NotABuiltinFloat(-0.1), NotABuiltinFloat(-0.3)]
+                }
+            return out
+
+    monkeypatch.setattr(sys.modules["llama_cpp"], "Llama", ExoticLlama)
+
+    gen = make(want_logprobs=True).generate("hi")
+
+    assert type(gen.mean_logprob) is float
+    assert json.dumps({"mean_logprob": gen.mean_logprob})
+    assert gen.mean_logprob == pytest.approx(-0.2)

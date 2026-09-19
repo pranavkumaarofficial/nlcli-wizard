@@ -166,7 +166,10 @@ class LlamaCppPythonBackend(Backend):
         lp = choice.get("logprobs") or {}
         token_lps = [x for x in (lp.get("token_logprobs") or []) if x is not None]
         if token_lps:
-            mean_lp = sum(token_lps) / len(token_lps)
+            # float() is load-bearing: these come back as numpy float32, which
+            # json.dumps refuses. Without it the run completes inference and then
+            # dies writing the generations file, losing the whole run.
+            mean_lp = float(sum(token_lps) / len(token_lps))
 
         return Generation(text=choice["text"].strip(), latency_s=dt, mean_logprob=mean_lp)
 
