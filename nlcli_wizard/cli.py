@@ -69,11 +69,12 @@ def translate(cli_tool: str, model_path: str, instruction: tuple):
             console.print("[yellow]Try rephrasing or use standard CLI syntax.[/yellow]")
 
     except Exception as e:
-        # markup=False and highlight=False so the guidance in the exception keeps
-        # its own line breaks and indentation. Rich would otherwise re-wrap it and
-        # try to read bracketed text such as ['docker', 'venvy'] as a style tag.
+        # soft_wrap keeps the URLs and paths in the guidance on one line each;
+        # rich would otherwise break them at the terminal width and make them
+        # uncopyable. markup=False stops bracketed text such as ['docker',
+        # 'venvy'] being read as a style tag.
         console.print("[red]Error:[/red]")
-        console.print(str(e), markup=False, highlight=False, crop=False)
+        console.print(str(e), markup=False, highlight=False, soft_wrap=True)
         raise SystemExit(1)
 
 
