@@ -202,8 +202,27 @@ Q4_K_M, llama.cpp b10437 CPU, temperature 0, 116 held-out examples, 4.67 s/examp
 
 | Model | Legacy (contaminated) | Corrected | unseen_command | unseen_phrasing |
 |---|---|---|---|---|
-| Gemma 3 4B | 94.0% | **46.6%** | 38.0% (n=50) | 53.0% (n=66) |
-| Gemma 3 1B | 73–76% | *not run — weights unavailable locally* | | |
+| labelled "Gemma 3 4B" (see below) | 94.0% | **46.6%** | 38.0% (n=50) | 53.0% (n=66) |
+| Gemma 3 1B | 73–76% | *see below* | | |
+
+> **Correction, 2026-09-18: the model in the first row is not a 4B.**
+> `models/docker_gemma3_4b_q4km.gguf` reports `general.architecture gemma3`,
+> `general.size_label 1000M`, `block_count 26`, `embedding_length 1152`,
+> `context_length 32768`, and 999,885,952 parameters summed over its 340 tensors.
+> Those are Gemma 3 1B's numbers. Gemma 3 4B has 34 blocks, embedding width 2560,
+> a 128k context, and a vision tower this file does not contain. The file is
+> 806,057,888 bytes; `docs/4B results.md` records the 1B GGUF as 810 MB and the 4B
+> as ~2.5 GB.
+>
+> Re-running the evaluation against that file on 2026-09-18 reproduced every number
+> in this section exactly, and all 116 generations byte for byte, so the file is the
+> one the run used. The 46.6% therefore belongs to a 1B, the row above it that says
+> the 1B was never run is wrong, and there is currently no clean-harness number for
+> any 4B model.
+>
+> Verify with `python scripts/gguf_header.py models/docker_gemma3_4b_q4km.gguf`.
+> The `gemma3_4b_*` filenames in `results/` are left alone so previously published
+> links keep resolving; the label is wrong, the numbers are not.
 
 **exact, normalized, and functional all returned 46.6%.** This matters: the looser
 metrics were built specifically to give the model every benefit of the doubt, and
@@ -274,9 +293,10 @@ commands, mostly single-flag, cannot teach flag composition.
 
 This puts the project's headline 1B-vs-4B "capacity ceiling" claim in doubt. That
 ceiling was attributed to the 1B model's parameter count; the evidence now suggests it
-was imposed by the dataset, and that the 4B model hit the same wall without anyone
-noticing because the contaminated metric hid it. Re-scoring the 1B on this test set is
-the cheap experiment that would settle it.
+was imposed by the dataset. With the correction above, the comparison has no clean 4B
+number left in it at all: both the 73–76% and the 46.6% are 1B results measured under
+different harnesses. Scoring an actual 4B on this test set is the cheap experiment that
+would settle it, and it has not been done.
 
 ---
 
@@ -294,14 +314,19 @@ python -m eval.contamination --train data/docker_training.jsonl \
 python -m eval.splits --input data/docker_training.jsonl \
                       --train-out data/train.jsonl --test-out data/test.jsonl
 
-# Score a GGUF (no Python build toolchain needed — uses a prebuilt llama.cpp binary)
+# Score a GGUF (no Python build toolchain needed — uses a prebuilt llama.cpp binary).
+# --llama-bin must be llama-server, not llama-cli: the default backend speaks HTTP,
+# and pointing it at llama-cli blocks for the full 180 s startup timeout.
 python -m eval.run_eval --model models/docker_gemma3_4b_q4km.gguf \
                         --template gemma3 \
-                        --llama-bin vendor/llama.cpp/llama-cli.exe \
-                        --label gemma3_4b --strict
+                        --llama-bin vendor/llama.cpp/llama-server.exe \
+                        --label gemma3_4b_docker --strict
 
 # Re-score a completed run under improved metrics, without re-running inference
-python -m eval.run_eval --replay results/gemma3_4b_generations.jsonl
+python -m eval.run_eval --replay results/gemma3_4b_docker_generations.jsonl
+
+# Inspect what a GGUF actually is (architecture, parameter count, quantization mix)
+python scripts/gguf_header.py models/docker_gemma3_4b_q4km.gguf
 ```
 
 Every run writes `results/<label>_generations.jsonl` (every prompt, raw output, and
