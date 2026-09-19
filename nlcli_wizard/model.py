@@ -87,17 +87,44 @@ class ModelManager:
             return self.MODEL_REGISTRY[self.cli_tool]["filename"]
         return self.DEFAULT_FILENAME_PATTERN.format(tool=self.cli_tool)
 
-    def _find_local_model(self) -> Optional[Path]:
-        """Search for model file in common local locations."""
-        filename = self._get_model_filename()
-        search_paths = [
-            Path("models") / filename,
-            Path(__file__).parent.parent / "models" / filename,
-            self.cache_dir / filename,
+    def _search_dirs(self):
+        """Directories searched for a local GGUF, nearest first."""
+        return [
+            Path("models"),
+            Path(__file__).parent.parent / "models",
+            self.cache_dir,
         ]
-        for path in search_paths:
-            if path.exists():
-                return path
+
+    def _find_local_model(self) -> Optional[Path]:
+        """Find a GGUF for this CLI tool on disk.
+
+        The exact registry filename is preferred. Failing that, any `*.gguf` in a
+        search directory whose name mentions the tool is accepted.
+
+        The fallback exists because the registry filename and the shipped file have
+        drifted apart before: the registry said `docker_gemma4_e2b_q4km.gguf` while
+        the file the README told people to download was
+        `docker_gemma3_4b_q4km.gguf`, so `translate` failed with the model sitting
+        in `models/`. Matching on the tool name rather than the full filename means
+        a re-quantized or re-named file keeps working.
+        """
+        filename = self._get_model_filename()
+
+        for directory in self._search_dirs():
+            candidate = directory / filename
+            if candidate.exists():
+                return candidate
+
+        for directory in self._search_dirs():
+            if not directory.is_dir():
+                continue
+            matches = sorted(
+                p for p in directory.glob("*.gguf")
+                if self.cli_tool.lower() in p.name.lower()
+            )
+            if matches:
+                return matches[0]
+
         return None
 
     def _load_model(self):
