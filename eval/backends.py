@@ -99,7 +99,22 @@ def stop_tokens(template: str) -> List[str]:
 # ---------------------------------------------------------------------------
 
 class LlamaCppPythonBackend(Backend):
-    """llama-cpp-python bindings. Preferred when the wheel installs."""
+    """llama-cpp-python bindings.
+
+    Logprobs are opt-in here, unlike in the llama-server backend. `Llama.__call__`
+    refuses `logprobs=` unless the model was constructed with `logits_all=True`:
+
+        ValueError: logprobs is not supported for models created with
+                    logits_all=False
+
+    and `logits_all=True` makes llama.cpp keep the logits for every position in the
+    prompt, not just the sampled ones, which on a 262k-token vocabulary is about
+    1 MB per prompt token. Every call raised, so this backend produced nothing at
+    all; the published run used llama-server.
+
+    Default is now no logprobs and no ValueError. Pass `want_logprobs=True` to get
+    Generation.mean_logprob back, and pay the memory.
+    """
 
     name = "llama-cpp-python"
 
@@ -110,23 +125,29 @@ class LlamaCppPythonBackend(Backend):
         n_ctx: int = 512,
         n_threads: int = 4,
         temperature: float = 0.0,
+        want_logprobs: bool = False,
     ):
         from llama_cpp import Llama  # imported lazily; optional dependency
 
         self.model_path = Path(model_path)
         self.template = template
         self.temperature = temperature
+        self.want_logprobs = want_logprobs
         self._llm = Llama(
             model_path=str(model_path),
             n_ctx=n_ctx,
             n_threads=n_threads,
             n_gpu_layers=0,
-            logits_all=False,
+            logits_all=want_logprobs,
             verbose=False,
         )
 
     def generate(self, prompt: str, max_tokens: int = 128) -> Generation:
         import time
+
+        kwargs = {}
+        if self.want_logprobs:
+            kwargs["logprobs"] = 1
 
         t0 = time.time()
         out = self._llm(
@@ -135,8 +156,8 @@ class LlamaCppPythonBackend(Backend):
             temperature=self.temperature,
             top_p=1.0 if self.temperature == 0 else 0.9,
             stop=stop_tokens(self.template),
-            logprobs=1,
             echo=False,
+            **kwargs,
         )
         dt = time.time() - t0
         choice = out["choices"][0]
@@ -155,6 +176,7 @@ class LlamaCppPythonBackend(Backend):
             "model": self.model_path.name,
             "template": self.template,
             "temperature": str(self.temperature),
+            "logprobs": str(self.want_logprobs),
         }
 
 
