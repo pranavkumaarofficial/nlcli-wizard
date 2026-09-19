@@ -153,6 +153,30 @@ def test_download_failure_names_the_repo(empty, monkeypatch):
     assert "401 Client Error" in msg
 
 
+@pytest.mark.parametrize("hub_available", [True, False], ids=["hub", "no-hub"])
+def test_missing_hub_is_reported_only_for_a_registered_tool(
+    empty, monkeypatch, hub_available
+):
+    """Installing huggingface-hub does not help if no model is registered.
+
+    These paths behave differently depending on whether huggingface_hub happens to
+    be importable, so both are pinned. Running only in an environment that has it
+    is how the ordering bug survived until a clean venv ran the suite.
+    """
+    import nlcli_wizard.model as model_module
+
+    monkeypatch.setattr(model_module, "HF_HUB_AVAILABLE", hub_available)
+
+    unregistered = ModelManager(cli_tool="kubectl")
+    monkeypatch.setattr(unregistered, "_search_dirs", lambda: [])
+    with pytest.raises(ValueError):
+        unregistered._download_model()
+
+    if not hub_available:
+        with pytest.raises(ImportError, match="huggingface-hub"):
+            empty._download_model()
+
+
 def test_unregistered_tool_message_lists_the_known_tools(tmp_path, monkeypatch):
     m = ModelManager(cli_tool="kubectl")
     monkeypatch.setattr(m, "_search_dirs", lambda: [tmp_path / "models"])
