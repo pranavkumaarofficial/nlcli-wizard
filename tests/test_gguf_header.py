@@ -109,3 +109,9 @@ def test_shipped_gguf_matches_what_the_readme_claims(capsys):
     assert "general.architecture = 'gemma3'" in out
     assert "general.size_label = '1000M'" in out
     assert "999,885,952" in out
+
+
+def test_missing_file_reports_cleanly(tmp_path, capsys):
+    """The README points readers at this script; a traceback is not an answer."""
+    assert gguf_header.main(str(tmp_path / "nope.gguf")) == 1
+    assert "cannot read" in capsys.readouterr().err

@@ -66,7 +66,13 @@ class _Reader:
 
 
 def main(path: str) -> int:
-    with open(path, "rb") as f:
+    try:
+        f = open(path, "rb")
+    except OSError as exc:
+        print(f"cannot read {path}: {exc.strerror}", file=sys.stderr)
+        return 1
+
+    with f:
         r = _Reader(f)
 
         magic = r.raw(4)
