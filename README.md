@@ -174,7 +174,7 @@ The harness itself needs no weights:
 
 ```bash
 pip install -e ".[dev]"
-python -m pytest -q tests                                                    # 90 tests
+python -m pytest -q tests                                                    # 91 tests
 python -m eval.contamination --train data/docker_training.jsonl              # self-audit
 python -m eval.contamination --train data/docker_training.jsonl \
                              --test  data/docker_test_handwritten.jsonl
@@ -227,7 +227,7 @@ eval/
   metrics.py          exact / normalized / functional scoring
   backends.py         llama-server, llama-cli, llama-cpp-python, transformers, replay
   run_eval.py         entry point
-tests/                90 tests
+tests/                91 tests
 data/
   docker_training.jsonl           v1, 594 rows / 298 unique commands
   docker_train_v2.jsonl           v2, 5,000 rows / 3,188 unique commands
