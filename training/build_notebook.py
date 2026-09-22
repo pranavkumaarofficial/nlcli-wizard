@@ -17,8 +17,11 @@ Design goals, all of them reactions to how the previous notebook went wrong:
 3. **A contamination gate aborts the notebook** if the training file leaks the
    held-out set. Not a warning - an exception.
 
-4. **Controlled comparison.** Default base model is Gemma 3 4B, the same model that
-   scored 46.6% on the v1 dataset, so the v1 -> v2 ablation changes one variable.
+4. **Controlled comparison.** The v1 46.6% was produced by a Gemma 3 *1B*, not the
+   4B the old README claimed: the shipped GGUF reports size_label 1000M and
+   999,885,952 parameters (`python scripts/gguf_header.py <model>`). So the
+   controlled run holds the base model at 1B and moves only the dataset. Model
+   capacity is a separate second run on the fixed v2 dataset.
 
 5. **`train_on_responses_only`** so loss is computed on the answer, not on the
    prompt tokens the model is given anyway.
@@ -141,19 +144,31 @@ cells.append(code("""
 cells.append(md("""
 ## 2. Configuration
 
-`BASE_MODEL` defaults to Gemma 3 4B — the *same* model that scored 46.6% on the v1
-dataset. Keeping it fixed means the v1→v2 comparison changes exactly one variable.
+Two open questions, one variable each. Do not try to answer both in one run.
 
-Swap to `unsloth/Qwen3-4B-Instruct-2507` for a second run **after** the controlled
-one, so model and dataset effects stay separable.
+| run | `BASE_MODEL` | holds fixed | measures |
+|---|---|---|---|
+| **1 (this one)** | `unsloth/gemma-3-1b-it` | model size | does the v2 dataset fix flag composition? |
+| 2 | `unsloth/gemma-3-4b-it` | v2 dataset | was the ceiling capacity after all? |
+
+Run 1 is 1B because **the 46.6% was produced by a 1B**. The file is named
+`docker_gemma3_4b_q4km.gguf` and the old README said "Gemma 3 4B", but its header
+reports `general.size_label 1000M` and 999,885,952 parameters over 340 tensors.
+Verify with `python scripts/gguf_header.py models/docker_gemma3_4b_q4km.gguf`.
+
+Training a 4B here and subtracting 46.6% would move dataset *and* model size at
+once and tell you nothing about either. Run 2 then settles the withdrawn
+1B-vs-4B "capacity ceiling" claim properly, because by then the dataset is fixed.
+
+Qwen3-4B is a third run, not a variant of either.
 """))
 
 cells.append(code("""
 CLI_TOOL      = "docker"
-BASE_MODEL    = "unsloth/gemma-3-4b-it"     # controlled: same model as the 46.6% run
+BASE_MODEL    = "unsloth/gemma-3-1b-it"     # run 1: matches the 1B behind 46.6%
 TRAIN_FILE    = "data/docker_train_v2.jsonl"
 TEST_FILE     = "data/docker_test_handwritten.jsonl"
-OUTPUT_PREFIX = "docker_gemma3_4b_v2"
+OUTPUT_PREFIX = "docker_gemma3_1b_v2"
 
 MAX_SEQ_LEN   = 512
 EPOCHS        = 2          # 5k examples; 3 epochs on this size overfits
@@ -162,8 +177,11 @@ LORA_R        = 32         # up from 16: more capacity for flag composition
 LORA_ALPHA    = 64
 SEED          = 42
 
-# Known reference point for the ablation table (docs/EVAL_METHODOLOGY.md)
+# Reference point for the ablation table (docs/EVAL_METHODOLOGY.md, section 4).
+# Measured on all 116 with a Gemma 3 1B fine-tuned on the v1 dataset. Comparable to
+# this run only while BASE_MODEL is the 1B and EVAL_LIMIT is None.
 V1_RESULT = {"overall": 0.466, "unseen_command": 0.380, "unseen_phrasing": 0.530}
+V1_BASE   = "unsloth/gemma-3-1b-it"
 
 print(f"{BASE_MODEL}  |  {TRAIN_FILE}  |  {EPOCHS} epochs, lr={LR}, r={LORA_R}")
 """))
@@ -255,9 +273,18 @@ def build_messages(instruction, mode):
 
 
 @torch.no_grad()
-def evaluate(model, tokenizer, label, mode="plain", max_new_tokens=64, limit=None):
-    \"\"\"Score a model on the held-out set. Returns a summary dict.\"\"\"
-    examples = test_examples[:limit] if limit else test_examples
+def evaluate(model, tokenizer, label, mode="plain", max_new_tokens=64):
+    \"\"\"Score a model on EVAL_SUBSET. Returns a summary dict.
+
+    There is no per-call `limit`. Every row of the ablation table is scored on the
+    same examples or the table compares nothing: `test_examples` is ordered by
+    category, so a prefix is not a sample. The first 60 rows hold 22 of the 29
+    `run` and 9 of the 11 `exec` examples (the two hardest categories, 20.7% and
+    9.1% for v1) and zero `system` or `network`. Scored on that prefix the v1 model
+    gets 40.0% against its true 46.6% — a 6.6 point penalty applied to whichever
+    configs happened to use it.
+    \"\"\"
+    examples = EVAL_SUBSET
     preds, golds, cats, novs, records = [], [], [], [], []
 
     t0 = time.time()
@@ -284,9 +311,10 @@ def evaluate(model, tokenizer, label, mode="plain", max_new_tokens=64, limit=Non
 
         preds.append(pred); golds.append(ex.command)
         cats.append(categorize(ex.command)); novs.append(nov)
-        records.append({"instruction": ex.instruction, "gold": ex.command,
-                        "predicted": pred, "raw_output": text, "novelty": nov,
-                        "category": cats[-1]})
+        records.append({"prompt": prompt, "instruction": ex.instruction,
+                        "gold": ex.command, "predicted": pred, "raw_output": text,
+                        "latency_s": None, "mean_logprob": None,
+                        "novelty": nov, "category": cats[-1]})
         if i % 25 == 0:
             print(f"    {i}/{len(examples)}  ({time.time()-t0:.0f}s)", flush=True)
 
@@ -322,6 +350,55 @@ RESULTS = {}
 print("evaluate() ready")
 """))
 
+cells.append(md("""
+### The evaluation subset
+
+`EVAL_SUBSET` is fixed once here and used by every configuration, baselines and
+fine-tune alike. Leave `EVAL_LIMIT = None` unless you are short of GPU time.
+
+If you do set a limit, it is drawn **stratified by category with a fixed seed**,
+never as a prefix. `data/docker_test_handwritten.jsonl` is grouped by category, so
+`test_examples[:60]` is not a sample of the test set: it is 22 of the 29 `run`
+examples, 9 of the 11 `exec`, and none of the 16 `system` or 9 `network`. The v1
+model scores 46.6% on all 116 and 40.0% on that prefix. Measuring baselines on the
+prefix and the fine-tune on the full set would have credited fine-tuning with 6.6
+points of sampling bias.
+"""))
+
+cells.append(code("""
+import collections, random
+
+EVAL_LIMIT = None      # None = all 116. An int = stratified sample of that size.
+
+if EVAL_LIMIT is None or EVAL_LIMIT >= len(test_examples):
+    EVAL_SUBSET = list(test_examples)
+else:
+    by_cat = collections.defaultdict(list)
+    for ex in test_examples:
+        by_cat[categorize(ex.command)].append(ex)
+
+    rng = random.Random(SEED)
+    EVAL_SUBSET, order = [], sorted(by_cat)
+    # Largest-remainder allocation so the subset keeps the category proportions.
+    quota = {c: len(by_cat[c]) * EVAL_LIMIT / len(test_examples) for c in order}
+    take = {c: int(quota[c]) for c in order}
+    for c in sorted(order, key=lambda c: quota[c] - take[c], reverse=True):
+        if sum(take.values()) >= EVAL_LIMIT:
+            break
+        take[c] += 1
+    for c in order:
+        EVAL_SUBSET += rng.sample(by_cat[c], min(take[c], len(by_cat[c])))
+
+EVAL_N = len(EVAL_SUBSET)
+print(f"EVAL_SUBSET: {EVAL_N} of {len(test_examples)} examples")
+print("  " + "  ".join(
+    f"{c}={n}" for c, n in sorted(
+        collections.Counter(categorize(e.command) for e in EVAL_SUBSET).items())))
+if EVAL_N < len(test_examples):
+    print("\\n  NOTE: subset run. The v1 reference row (46.6%) was measured on all")
+    print("  116, so it is NOT comparable to these rows. The ablation table says so.")
+"""))
+
 # ---------------------------------------------------------------------------
 cells.append(md("""
 ## 5. Baselines — before any training
@@ -329,14 +406,13 @@ cells.append(md("""
 If the base model with few-shot prompting already matches the fine-tune, the
 fine-tuning is not earning its keep, and that is a finding worth having.
 
-Baselines run on a subset (`BASELINE_LIMIT`) to save GPU time. Set it to `None`
-for the full 116 if you want the baseline directly comparable to the final number.
+Baselines are scored on `EVAL_SUBSET`, the same examples the fine-tune is scored
+on. That is the only way the rows of the ablation table mean anything next to each
+other.
 """))
 
 cells.append(code("""
 from unsloth import FastLanguageModel
-
-BASELINE_LIMIT = 60   # None for all 116
 
 model, tokenizer = FastLanguageModel.from_pretrained(
     model_name=BASE_MODEL,
@@ -354,18 +430,17 @@ print(repr(tokenizer.apply_chat_template(
 
 cells.append(code("""
 RESULTS["base_zeroshot"] = evaluate(
-    model, tokenizer, "base_zeroshot", mode="plain", limit=BASELINE_LIMIT)
+    model, tokenizer, "base_zeroshot", mode="plain")
 """))
 
 cells.append(code("""
 RESULTS["base_system"] = evaluate(
-    model, tokenizer, "base_system", mode="system", limit=BASELINE_LIMIT)
+    model, tokenizer, "base_system", mode="system")
 """))
 
 cells.append(code("""
 RESULTS["base_fewshot"] = evaluate(
-    model, tokenizer, "base_fewshot", mode="fewshot", max_new_tokens=48,
-    limit=BASELINE_LIMIT)
+    model, tokenizer, "base_fewshot", mode="fewshot", max_new_tokens=48)
 """))
 
 # ---------------------------------------------------------------------------
@@ -552,33 +627,67 @@ RESULTS["v2_finetune"] = evaluate(model, tokenizer, "v2_finetune", mode="plain")
 cells.append(md("## 8. Ablation table"))
 
 cells.append(code("""
+# The v1 row is a historical number, not something measured in this session. It
+# belongs in the table only when this run is actually comparable to it: same base
+# model, same full 116 examples. Otherwise it is printed separately, below, so it
+# cannot be read as a delta.
+V1_COMPARABLE = (BASE_MODEL == V1_BASE) and (EVAL_N == 116)
+
+v1_row = ("v1 fine-tune (v1 data)",
+          {"n": 116,
+           "overall": {"functional": V1_RESULT["overall"]},
+           "by_novelty": {
+               "unseen_command":  {"functional": V1_RESULT["unseen_command"]},
+               "unseen_phrasing": {"functional": V1_RESULT["unseen_phrasing"]}}})
+
 rows = [
     ("base, zero-shot",   RESULTS.get("base_zeroshot")),
     ("base, +system",     RESULTS.get("base_system")),
     ("base, 8-shot",      RESULTS.get("base_fewshot")),
-    ("v1 fine-tune",      {"n": 116, "overall": {"functional": V1_RESULT["overall"]},
-                           "by_novelty": {
-                               "unseen_command":  {"functional": V1_RESULT["unseen_command"]},
-                               "unseen_phrasing": {"functional": V1_RESULT["unseen_phrasing"]}}}),
-    ("v2 fine-tune",      RESULTS.get("v2_finetune")),
 ]
+if V1_COMPARABLE:
+    rows.append(v1_row)
+rows.append(("v2 fine-tune (v2 data)", RESULTS.get("v2_finetune")))
 
 print(f"{'config':<22}{'n':>5}{'overall':>10}{'unseen_cmd':>13}{'unseen_phr':>13}")
-print("-" * 63)
+print("-" * 65)
+seen_n = set()
 for name, r in rows:
     if not r:
-        print(f"{name:<22}{'—':>5}{'not run':>10}")
+        print(f"{name:<22}{'-':>5}{'not run':>10}")
         continue
     o = r["overall"]["functional"]
     uc = r["by_novelty"].get("unseen_command", {}).get("functional")
     up = r["by_novelty"].get("unseen_phrasing", {}).get("functional")
     n = r.get("n", "")
+    seen_n.add(n)
+    flag = "  <- different n" if n != EVAL_N else ""
     print(f"{name:<22}{n:>5}{o:>9.1%}"
-          f"{(f'{uc:.1%}' if uc is not None else '—'):>13}"
-          f"{(f'{up:.1%}' if up is not None else '—'):>13}")
-print("-" * 63)
-print("Baselines may use a subset (BASELINE_LIMIT); compare with that in mind.")
-print("n=116 gives roughly +/-9 points at 95% confidence near 50%.")
+          f"{(f'{uc:.1%}' if uc is not None else '-'):>13}"
+          f"{(f'{up:.1%}' if up is not None else '-'):>13}{flag}")
+print("-" * 65)
+
+if len(seen_n) > 1:
+    print()
+    print("WARNING: rows were scored on different numbers of examples.")
+    print("Only rows with the same n are comparable. The v1 reference was measured")
+    print("on all 116; if this run used EVAL_LIMIT, do not subtract it from v2.")
+
+if not V1_COMPARABLE:
+    print()
+    print("v1 reference EXCLUDED from the table above, because this run is not a")
+    print("controlled comparison against it:")
+    if BASE_MODEL != V1_BASE:
+        print(f"   base model  {BASE_MODEL}  !=  {V1_BASE} (the model behind 46.6%)")
+    if EVAL_N != 116:
+        print(f"   examples    {EVAL_N}  !=  116 (the set 46.6% was measured on)")
+    print("   For the record only, not a delta: v1 = "
+          f"{V1_RESULT['overall']:.1%} overall on 116.")
+
+print()
+print(f"All measured rows scored on the same {EVAL_N} examples, same scorer.")
+print("n=116 gives roughly +/-9 points at 95% confidence near 50%, so treat")
+print("differences smaller than that as noise rather than as an improvement.")
 """))
 
 cells.append(code("""
