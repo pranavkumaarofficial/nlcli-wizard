@@ -97,8 +97,12 @@ v1 fine-tune (known)         46.6%        38.0%             53.0%
 v2 fine-tune                     ?            ?                 ?
 ```
 
-**Runtime:** ~50–70 min on a free T4. Baselines ~15 min, training ~25 min,
-evaluation ~15 min, GGUF export ~10 min.
+**Runtime:** not measured yet. The ~50–70 min figure previously quoted here was an
+estimate for a 4B; run 1 is a 1B and should be well under that. Record the real
+numbers on the first run and replace this line with them.
+
+The llama.cpp build in section 9 is the slowest single step and is only worth
+paying for if the ablation table shows an improvement.
 
 **Before you start:** Runtime → Change runtime type → **T4 GPU**.
 """))
