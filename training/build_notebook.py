@@ -110,23 +110,57 @@ paying for if the ablation table shows an improvement.
 # ---------------------------------------------------------------------------
 cells.append(md("## 1. Setup"))
 
-cells.append(code(f"""
-# Clone the repo (or refresh it if the runtime already has it)
+cells.append(code(r"""
+# Clone the repo at a named branch.
+#
+# Experiments run from a branch, not from main: this notebook has to be executed
+# before anyone can claim it works, and main should not carry training code that
+# has never completed a run. Merge after the ablation table lands.
+#
+# Every number below should be traceable to one commit, so the branch, the commit
+# and its subject are printed here and recorded into each results summary.
 import os, subprocess, sys
 
-REPO = "{REPO}"
+REPO   = "__REPO__"
+BRANCH = "train/v2-run"          # <- the branch you pushed. "main" once merged.
+CLONE  = "/content/nlcli-wizard"
 
-if not os.path.exists('/content/nlcli-wizard'):
-    subprocess.run(['git', 'clone', REPO, '/content/nlcli-wizard'], check=True)
 
-os.chdir('/content/nlcli-wizard')
-subprocess.run(['git', 'pull', '--ff-only'], check=False)
-sys.path.insert(0, '/content/nlcli-wizard')
+def git(*args):
+    r = subprocess.run(["git", "-C", CLONE, *args], capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError("git " + " ".join(args) + "\n" + r.stderr.strip())
+    return r.stdout.strip()
 
-print("cwd:", os.getcwd())
-print("HEAD:", subprocess.run(['git','rev-parse','--short','HEAD'],
-                              capture_output=True, text=True).stdout.strip())
-"""))
+
+if not os.path.exists(CLONE):
+    r = subprocess.run(["git", "clone", "--branch", BRANCH, REPO, CLONE],
+                       capture_output=True, text=True)
+    if r.returncode != 0:
+        raise RuntimeError(
+            f"Could not clone branch {BRANCH!r}.\n"
+            "Most likely it has not been pushed yet. From your laptop:\n"
+            f"    git push -u origin {BRANCH}\n\n" + r.stderr.strip())
+else:
+    # Runtime already has a clone, possibly on another branch or another commit.
+    git("fetch", "origin", BRANCH)
+    git("checkout", "-B", BRANCH, f"origin/{BRANCH}")
+    git("reset", "--hard", f"origin/{BRANCH}")
+
+os.chdir(CLONE)
+sys.path.insert(0, CLONE)
+
+COMMIT  = git("rev-parse", "--short", "HEAD")
+SUBJECT = git("log", "-1", "--format=%s")
+
+print(f"branch : {BRANCH}")
+print(f"commit : {COMMIT}  {SUBJECT}")
+
+assert not git("status", "--porcelain"), (
+    "working tree is dirty - results from it would not be reproducible"
+)
+print("clean checkout")
+""".replace("__REPO__", REPO)))
 
 cells.append(code("""
 import torch
@@ -334,6 +368,12 @@ def evaluate(model, tokenizer, label, mode="plain", max_new_tokens=64):
     summary = {
         "label": label,
         "mode": mode,
+        # Provenance: which code and which model produced this row. Without it a
+        # summary.json is a number with no way to check what made it.
+        "branch": BRANCH,
+        "commit": COMMIT,
+        "base_model": BASE_MODEL,
+        "train_file": TRAIN_FILE,
         "n": overall.n,
         "overall": {m: overall.rate(m) for m in ("exact", "normalized", "functional")},
         "by_novelty": {k: {"n": v["n"], "functional": v["functional"]/v["n"]}
