@@ -312,3 +312,44 @@ def test_handwritten_test_set_commands_all_parse():
             p = parse_command(row["command"])
             assert p.parse_ok, f"line {lineno}: {row['command']!r} failed to parse"
             assert p.path[0] in {"docker", "docker-compose"}, f"line {lineno}"
+
+
+# --- markdown fence labels (regression) --------------------------------------
+
+
+def test_extract_command_skips_a_docker_fence_label():
+    """A ```docker fence used to return the literal string "docker".
+
+    65 of 116 base_zeroshot generations scored zero that way, reading the
+    baseline as 3.4% when the same outputs parse to 9.5%. Fine-tuned models emit
+    COMMAND: and never reach the fence branch, so the bug only ever depressed the
+    baselines, which is the direction that flatters the fine-tune.
+    """
+    raw = "```docker\ndocker run -d -p 8080:80 nginx\n```\n\n**Explanation:** ..."
+    assert extract_command(raw) == "docker run -d -p 8080:80 nginx"
+
+
+@pytest.mark.parametrize(
+    "label",
+    ["bash", "sh", "shell", "console", "docker", "dockerfile", "compose",
+     "yaml", "json", "text", "powershell", "cmd", "python"],
+)
+def test_every_declared_fence_label_is_skipped(label):
+    raw = f"```{label}\ndocker ps -a\n```"
+    assert extract_command(raw) == "docker ps -a"
+
+
+def test_fence_label_is_matched_case_insensitively():
+    assert extract_command("```Docker\ndocker ps\n```") == "docker ps"
+    assert extract_command("```BASH\ndocker ps\n```") == "docker ps"
+
+
+def test_a_command_is_still_returned_when_it_shares_a_word_with_a_label():
+    """`docker ps` starts with "docker" but is not a bare fence label."""
+    assert extract_command("docker ps") == "docker ps"
+    assert extract_command("```\ndocker compose up -d\n```") == "docker compose up -d"
+
+
+def test_structured_output_still_wins_over_the_fence_branch():
+    raw = "```docker\nCOMMAND: docker ps -a\n```"
+    assert extract_command(raw) == "docker ps -a"

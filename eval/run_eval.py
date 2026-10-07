@@ -47,6 +47,18 @@ from eval.normalize import normalized_string
 DEFAULT_TRAIN = Path("data/docker_training.jsonl")
 DEFAULT_TEST = Path("data/docker_test_handwritten.jsonl")
 
+# Fence labels a model may put after ``` when it wraps a command in markdown.
+# A label left out of this set gets returned as the predicted command, scoring
+# zero for an answer the model may well have got right. Err on the side of
+# listing too many: a real command is never a bare single word from this list.
+FENCE_LABELS = frozenset({
+    "bash", "sh", "shell", "console", "zsh", "fish", "terminal",
+    "cmd", "powershell", "ps1", "bat",
+    "docker", "dockerfile", "compose", "docker-compose",
+    "yaml", "yml", "json", "toml", "ini", "text", "txt", "plaintext",
+    "sql", "python", "py", "code",
+})
+
 
 def extract_command(raw_output: str) -> str:
     """Pull the command out of the model's structured response.
@@ -69,9 +81,17 @@ def extract_command(raw_output: str) -> str:
             return line.split(":", 1)[1].strip()
 
     # Strip common markdown fencing before falling back.
+    #
+    # The skip list has to cover every fence label a model might reach for, not
+    # just the shell ones. It originally held {bash, sh, shell, console}, so a
+    # ```docker fence returned the literal string "docker" as the prediction:
+    # 65 of 116 base_zeroshot generations scored zero that way, and the baseline
+    # read 3.4% when the same outputs parse to 9.5%. Fine-tuned models emit
+    # "COMMAND:" and never reach this branch, so the bug depressed only the
+    # baselines, which is the direction that flatters the fine-tune.
     for line in text.splitlines():
         line = line.strip().strip("`").strip()
-        if not line or line.lower() in {"bash", "sh", "shell", "console"}:
+        if not line or line.lower() in FENCE_LABELS:
             continue
         return line
     return ""
