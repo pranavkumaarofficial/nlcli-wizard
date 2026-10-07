@@ -824,6 +824,20 @@ if len(seen_n) > 1:
     print("Only rows with the same n are comparable. The v1 reference was measured")
     print("on all 116; if this run used EVAL_LIMIT, do not subtract it from v2.")
 
+# The novelty columns are a property of (test set, TRAINING FILE), not of the model.
+# v1 trained on 298 unique commands and v2 on 3,188, so the same 116 test items
+# partition differently: unseen_command is 50 under v1 and 43 under v2, and only 33
+# items are unseen under both. Printing 38.0% and 39.5% in one column compares two
+# different populations. Say so rather than let the column be read as a delta.
+_ns = {r.get("by_novelty", {}).get("unseen_command", {}).get("n")
+       for _, r in rows if r and r.get("by_novelty", {}).get("unseen_command")}
+if len(_ns) > 1:
+    print()
+    print("WARNING: the unseen_cmd / unseen_phr columns are NOT comparable across")
+    print(f"         rows. unseen_command sizes seen: {sorted(x for x in _ns if x)}.")
+    print("         The partition is defined by which commands are in the training")
+    print("         file, and the training file changed. Only `overall` compares.")
+
 if not V1_COMPARABLE:
     print()
     print("v1 reference EXCLUDED from the table above, because this run is not a")
