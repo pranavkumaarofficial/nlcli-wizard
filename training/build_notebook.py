@@ -374,6 +374,9 @@ def evaluate(model, tokenizer, label, mode="plain", max_new_tokens=64):
         "commit": COMMIT,
         "base_model": BASE_MODEL,
         "train_file": TRAIN_FILE,
+        # Colab installs are unpinned, so the resolved stack is part of the result.
+        # TrainingArguments stopped accepting warmup_ratio between two runs.
+        "stack": globals().get("STACK"),
         "n": overall.n,
         "overall": {m: overall.rate(m) for m in ("exact", "normalized", "functional")},
         "by_novelty": {k: {"n": v["n"], "functional": v["functional"]/v["n"]}
@@ -593,12 +596,75 @@ print(f"response marker    {RESP_PART!r}")
 assert INSTR_PART in probe and RESP_PART in probe, "markers not found in template"
 """))
 
-cells.append(code("""
-args = TrainingArguments(
+cells.append(md("""
+### Training arguments, built against the installed signature
+
+The Colab install is `pip install --no-deps trl peft accelerate`, which resolves
+to whatever is current that day. That drift has already broken this cell once:
+`TrainingArguments` rejected `warmup_ratio` on 2026-10-07.
+
+So the arguments are filtered against the class's real signature instead of
+passed blind. A rename with a defined equivalent is rewritten, and a warmup
+*ratio* becomes the matching number of *steps* computed from the step count, so
+the schedule itself does not change. Anything with no equivalent is printed
+under DROPPED, and the six arguments that define what this run *is* are asserted
+present: losing `seed` or `max_grad_norm` quietly would make the result
+impossible to describe afterwards.
+"""))
+
+cells.append(code(r"""
+import dataclasses, inspect, math
+
+import torch, transformers, trl, peft, accelerate
+from transformers import TrainingArguments
+from trl import SFTTrainer
+from unsloth.chat_templates import train_on_responses_only
+
+try:
+    from trl import SFTConfig
+except ImportError:
+    SFTConfig = None
+
+# Recorded into the results summaries: a run is not reproducible without them.
+STACK = {m.__name__: getattr(m, "__version__", "?")
+         for m in (transformers, trl, peft, accelerate, torch)}
+try:
+    import unsloth
+    STACK["unsloth"] = getattr(unsloth, "__version__", "?")
+except Exception:
+    pass
+for _k, _v in STACK.items():
+    print(f"{_k:<13} {_v}")
+
+# TRL moved the training knobs onto SFTConfig; prefer it where it exists.
+CONFIG_CLS = SFTConfig or TrainingArguments
+print(f"\nconfig class : {CONFIG_CLS.__module__}.{CONFIG_CLS.__name__}")
+
+
+def accepted(cls):
+    # Init parameters cls will take. None means it accepts **kwargs.
+    if dataclasses.is_dataclass(cls):
+        return {f.name for f in dataclasses.fields(cls) if f.init}
+    try:
+        sig = inspect.signature(cls.__init__)
+    except (TypeError, ValueError):
+        return None
+    if any(p.kind is p.VAR_KEYWORD for p in sig.parameters.values()):
+        return None
+    return {n for n in sig.parameters if n != "self"}
+
+
+BATCH, ACCUM = 4, 4
+STEPS_PER_EPOCH = math.ceil(len(train_ds) / (BATCH * ACCUM))
+TOTAL_STEPS = STEPS_PER_EPOCH * EPOCHS
+print(f"schedule     : {len(train_ds)} rows -> {STEPS_PER_EPOCH} steps/epoch "
+      f"x {EPOCHS} epochs = {TOTAL_STEPS} steps")
+
+WANTED = dict(
     output_dir="./outputs",
     num_train_epochs=EPOCHS,
-    per_device_train_batch_size=4,
-    gradient_accumulation_steps=4,
+    per_device_train_batch_size=BATCH,
+    gradient_accumulation_steps=ACCUM,
     learning_rate=LR,
     weight_decay=0.01,
     lr_scheduler_type="cosine",
@@ -608,7 +674,7 @@ args = TrainingArguments(
     logging_steps=20,
     eval_strategy="steps",
     eval_steps=50,
-    per_device_eval_batch_size=4,
+    per_device_eval_batch_size=BATCH,
     save_strategy="steps",
     save_steps=50,
     save_total_limit=2,
@@ -621,21 +687,62 @@ args = TrainingArguments(
     report_to="none",
 )
 
-trainer = SFTTrainer(
-    model=model,
-    tokenizer=tokenizer,
-    train_dataset=train_ds,
-    eval_dataset=val_ds,
-    dataset_text_field="text",
-    max_seq_length=MAX_SEQ_LEN,
-    args=args,
-    packing=False,
-)
+ok = accepted(CONFIG_CLS)
+kwargs, DROPPED, rewritten = {}, [], []
+for k, v in WANTED.items():
+    if ok is None or k in ok:
+        kwargs[k] = v
+    elif k == "warmup_ratio" and "warmup_steps" in ok:
+        n = max(1, round(v * TOTAL_STEPS))
+        kwargs["warmup_steps"] = n
+        rewritten.append(f"warmup_ratio={v} -> warmup_steps={n} "
+                         f"({v:.0%} of {TOTAL_STEPS} steps, schedule unchanged)")
+    elif k == "eval_strategy" and "evaluation_strategy" in ok:
+        kwargs["evaluation_strategy"] = v
+        rewritten.append(f"eval_strategy -> evaluation_strategy={v!r}")
+    else:
+        DROPPED.append(k)
 
+for line in rewritten:
+    print("  rewrote:", line)
+if DROPPED:
+    print(f"\n  !! DROPPED, unsupported by this version:", DROPPED)
+    print("  Decide whether the run still measures what you intended.")
+
+CRITICAL = {"num_train_epochs", "learning_rate", "max_grad_norm", "seed",
+            "per_device_train_batch_size", "gradient_accumulation_steps"}
+missing = CRITICAL - set(kwargs)
+assert not missing, f"critical training args unsupported: {sorted(missing)}"
+
+# Newer TRL owns the dataset and sequence knobs on the config; older on the trainer.
+DATASET_KNOBS = (("dataset_text_field", "text"),
+                 ("max_seq_length", MAX_SEQ_LEN),
+                 ("packing", False))
+for k, v in DATASET_KNOBS:
+    if ok is not None and k in ok:
+        kwargs[k] = v
+
+args = CONFIG_CLS(**kwargs)
+
+# tokenizer= was renamed processing_class=.
+tr_ok = accepted(SFTTrainer)
+tr = dict(model=model, train_dataset=train_ds, eval_dataset=val_ds, args=args)
+if tr_ok is None or "tokenizer" in tr_ok:
+    tr["tokenizer"] = tokenizer
+elif "processing_class" in tr_ok:
+    tr["processing_class"] = tokenizer
+    print("  using processing_class= instead of tokenizer=")
+else:
+    raise RuntimeError(f"SFTTrainer takes no tokenizer argument: {sorted(tr_ok)}")
+for k, v in DATASET_KNOBS:
+    if tr_ok is not None and k in tr_ok and k not in kwargs:
+        tr[k] = v
+
+trainer = SFTTrainer(**tr)
 trainer = train_on_responses_only(
     trainer, instruction_part=INSTR_PART, response_part=RESP_PART
 )
-print("trainer ready — loss is computed on responses only")
+print(f"\ntrainer ready - loss is computed on responses only")
 """))
 
 cells.append(code("""
