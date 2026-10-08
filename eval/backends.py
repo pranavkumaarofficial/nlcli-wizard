@@ -525,24 +525,62 @@ class ReplayBackend(Backend):
 
     name = "replay"
 
+    # The instruction prefix run_eval wraps in a chat template. Used to recover the
+    # instruction from a prompt string when matching on the prompt fails.
+    _INSTRUCTION_RE = re.compile(
+        r"(Translate to [a-zA-Z0-9_.-]+ command:.*?)(?:<end_of_turn>|<\|im_end\|>"
+        r"|<\|eot_id\|>|<turn\|>|$)",
+        re.DOTALL,
+    )
+
     def __init__(self, path: Path):
         self.path = Path(path)
         self._by_prompt: Dict[str, Generation] = {}
+        self._by_instruction: Dict[str, Generation] = {}
+
         with open(self.path, "r", encoding="utf-8") as f:
             for line in f:
                 if not line.strip():
                     continue
                 row = json.loads(line)
-                self._by_prompt[row["prompt"]] = Generation(
+                gen = Generation(
                     text=row.get("raw_output", ""),
-                    latency_s=row.get("latency_s", 0.0),
+                    latency_s=row.get("latency_s") or 0.0,
                     mean_logprob=row.get("mean_logprob"),
                 )
+                if row.get("prompt"):
+                    self._by_prompt[row["prompt"]] = gen
+                # Second index, because the prompt is not a stable key across
+                # producers. run_eval builds prompts from CHAT_TEMPLATES; the Colab
+                # notebook builds them with tokenizer.apply_chat_template, which
+                # prepends <bos>. The strings differ, so a published notebook run
+                # could not be re-scored by --replay at all, which defeats the point
+                # of recording generations. The instruction is the stable key.
+                if row.get("instruction"):
+                    self._by_instruction[row["instruction"]] = gen
+
+        if not self._by_prompt and not self._by_instruction:
+            raise ValueError(f"{self.path} contains no replayable records")
 
     def generate(self, prompt: str, max_tokens: int = 128) -> Generation:
-        if prompt not in self._by_prompt:
-            raise KeyError(f"no recorded generation for prompt: {prompt[:80]!r}")
-        return self._by_prompt[prompt]
+        hit = self._by_prompt.get(prompt)
+        if hit is not None:
+            return hit
+
+        match = self._INSTRUCTION_RE.search(prompt)
+        if match:
+            hit = self._by_instruction.get(match.group(1).strip())
+            if hit is not None:
+                return hit
+
+        raise KeyError(
+            f"no recorded generation for prompt: {prompt[:80]!r}\n"
+            f"  {len(self._by_prompt)} prompt keys and "
+            f"{len(self._by_instruction)} instruction keys in {self.path.name}.\n"
+            "  If the recording came from a different prompt builder, the "
+            "instruction fallback should have matched; check that the file has an "
+            "'instruction' field."
+        )
 
     def describe(self) -> Dict[str, str]:
         return {"backend": self.name, "source": str(self.path)}

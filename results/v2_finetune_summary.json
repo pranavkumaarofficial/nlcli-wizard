@@ -1,0 +1,58 @@
+{
+  "label": "v2_finetune",
+  "mode": "plain",
+  "branch": "train/v2-run",
+  "commit": "5bc4e83",
+  "base_model": "unsloth/gemma-3-1b-it",
+  "train_file": "data/docker_train_v2.jsonl",
+  "n": 116,
+  "overall": {
+    "exact": 0.603448275862069,
+    "normalized": 0.6293103448275862,
+    "functional": 0.6293103448275862
+  },
+  "by_novelty": {
+    "unseen_command": {
+      "n": 43,
+      "functional": 0.3953488372093023
+    },
+    "unseen_phrasing": {
+      "n": 73,
+      "functional": 0.7671232876712328
+    }
+  },
+  "by_category": {
+    "run": {
+      "n": 29,
+      "functional": 0.4827586206896552
+    },
+    "exec": {
+      "n": 11,
+      "functional": 0.5454545454545454
+    },
+    "build": {
+      "n": 9,
+      "functional": 0.5555555555555556
+    },
+    "ps_images": {
+      "n": 20,
+      "functional": 0.6
+    },
+    "volume": {
+      "n": 7,
+      "functional": 0.5714285714285714
+    },
+    "compose": {
+      "n": 15,
+      "functional": 0.8
+    },
+    "network": {
+      "n": 9,
+      "functional": 0.7777777777777778
+    },
+    "system": {
+      "n": 16,
+      "functional": 0.8125
+    }
+  }
+}
