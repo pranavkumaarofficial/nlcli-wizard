@@ -55,9 +55,14 @@ wandb/
 /vendor/
 
 # --- Evaluation output ---
-# results/*_summary.json IS tracked: it is the published record of a run.
-# The per-generation JSONL and raw console logs are not.
-results/*_generations.jsonl
+# results/ is the published record of a run, and ALL of it is tracked, summaries
+# and per-generation JSONL alike. 460 KB total for five runs.
+#
+# The generations were excluded until 2026-10-07. That was wrong: the weights are
+# not currently downloadable, so `--replay` over a recorded generations file is the
+# only way a stranger can check a published number at all, and it takes under a
+# second. Excluding the file made every headline unverifiable by anyone but the
+# author. See notes/FINDINGS.md section 5.3.
 *.log
 
 # --- Caches ---

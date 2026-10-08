@@ -1,0 +1,98 @@
+{
+  "label": "v2_finetune_rescored",
+  "timestamp_utc": "20261008T003918Z",
+  "backend": {
+    "backend": "replay",
+    "source": "results\\v2_finetune_generations.jsonl"
+  },
+  "train_file": "data\\docker_training.jsonl",
+  "test_file": "data\\docker_test_handwritten.jsonl",
+  "n_test": 116,
+  "contamination": {
+    "n_train": 594,
+    "n_test": 116,
+    "train_unique_prompts": 592,
+    "train_unique_targets": 298,
+    "test_unique_targets": 106,
+    "prompt_verbatim": 0,
+    "prompt_near_dup": 0,
+    "template_shared": 0,
+    "target_overlap": 66,
+    "is_clean": true,
+    "is_strict_clean": false
+  },
+  "overall": {
+    "exact": 0.603448275862069,
+    "normalized": 0.6293103448275862,
+    "functional": 0.6293103448275862
+  },
+  "by_category": {
+    "run": {
+      "n": 29,
+      "exact": 0.3793103448275862,
+      "normalized": 0.4827586206896552,
+      "functional": 0.4827586206896552
+    },
+    "exec": {
+      "n": 11,
+      "exact": 0.5454545454545454,
+      "normalized": 0.5454545454545454,
+      "functional": 0.5454545454545454
+    },
+    "build": {
+      "n": 9,
+      "exact": 0.5555555555555556,
+      "normalized": 0.5555555555555556,
+      "functional": 0.5555555555555556
+    },
+    "ps_images": {
+      "n": 20,
+      "exact": 0.6,
+      "normalized": 0.6,
+      "functional": 0.6
+    },
+    "volume": {
+      "n": 7,
+      "exact": 0.5714285714285714,
+      "normalized": 0.5714285714285714,
+      "functional": 0.5714285714285714
+    },
+    "compose": {
+      "n": 15,
+      "exact": 0.8,
+      "normalized": 0.8,
+      "functional": 0.8
+    },
+    "network": {
+      "n": 9,
+      "exact": 0.7777777777777778,
+      "normalized": 0.7777777777777778,
+      "functional": 0.7777777777777778
+    },
+    "system": {
+      "n": 16,
+      "exact": 0.8125,
+      "normalized": 0.8125,
+      "functional": 0.8125
+    }
+  },
+  "by_novelty": {
+    "unseen_command": {
+      "n": 50,
+      "exact": 0.54,
+      "normalized": 0.6,
+      "functional": 0.6
+    },
+    "unseen_phrasing": {
+      "n": 66,
+      "exact": 0.6515151515151515,
+      "normalized": 0.6515151515151515,
+      "functional": 0.6515151515151515
+    }
+  },
+  "mean_latency_s": 0.0003649695166226091,
+  "host": {
+    "platform": "Windows-10-10.0.26200-SP0",
+    "python": "3.9.16"
+  }
+}
