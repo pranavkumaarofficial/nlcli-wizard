@@ -1,5 +1,6 @@
 # nlcli-wizard
 
+[![tests](https://github.com/pranavkumaarofficial/nlcli-wizard/actions/workflows/tests.yml/badge.svg)](https://github.com/pranavkumaarofficial/nlcli-wizard/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
 Translates plain English into Docker commands using a fine-tuned small language
