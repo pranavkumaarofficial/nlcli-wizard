@@ -2,105 +2,94 @@
 
 [![tests](https://github.com/pranavkumaarofficial/nlcli-wizard/actions/workflows/tests.yml/badge.svg)](https://github.com/pranavkumaarofficial/nlcli-wizard/actions/workflows/tests.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1uBJJ_EqCMT8bMnCnVQHeN8USKu1ABddL?usp=sharing)
+[![Reddit](https://img.shields.io/badge/Reddit-r%2FLocalLLaMA-orange.svg)](https://www.reddit.com/r/LocalLLaMA/comments/1or1e7p/i_finetuned_gemma_3_1b_for_cli_command/)
 
-**Natural language to CLI commands, offline, on CPU.** A fine-tuned 1B small language
-model turns plain English into Docker commands with no API key, no network call, and
-no GPU. Built for machines that cannot reach a hosted model: air-gapped hosts,
-customer-site VMs, restricted networks.
+**A pipeline for giving any Python CLI tool a `-w` flag that takes plain English.**
+Local, offline, one small model per library, trained once and shipped with the package.
 
-Stack: QLoRA fine-tuning, GGUF quantization, llama.cpp inference, Python 3.10+.
+## The idea
+
+Every CLI has flags you look up every time. I do it for `docker run`. I do it for
+`tar`. The reference is right there in `--help` and it still takes three tries.
+
+So: what if the library shipped with a translator?
+
+```bash
+docker -w "show all running containers"
+# docker ps
+
+docker -w "run nginx on port 8080 in the background"
+# docker run -d -p 8080:80 nginx
+```
+
+No cloud call. No API key. The model is a few hundred megabytes, it came down with
+`pip install`, and it runs on the CPU you already have.
 
 https://github.com/user-attachments/assets/2d7ca418-d6b2-4449-a81e-417df9666d44
 
-<sub>Recorded February 2026, before the correction below. The `CONFIDENCE` value it
-shows is not real; see [Limitations](#limitations).</sub>
+## How the pipeline works
 
-> **This project previously published 94% Docker accuracy. That number was wrong.**
-> It was measured on training data. The corrected figure is 46.6%. The full account
-> is in [`docs/EVAL_METHODOLOGY.md`](docs/EVAL_METHODOLOGY.md): what broke, how it
-> was found, and what replaced it. Both numbers are kept side by side below rather
-> than the old one being quietly deleted.
+The product here is not the Docker model. It is the four steps that produce one, so a
+library maintainer can run them against their own tool.
 
-## Results
+**1. Generate.** A tool's flag grammar becomes a training set: flag specs with several
+intent phrasings each, examples built by sampling flag subsets rather than whole
+commands, sentence order randomised. The point is covering flag *combinations*, since
+that is where a small model actually struggles.
 
-Every row below is the same 116 hand-written held-out prompts, scored by the same
-code. Zero prompt overlap with training.
+**2. Audit.** Before anything trains, the dataset is checked against the held-out set
+for leakage across four channels. If a test prompt turns up in training, the run stops.
+Not a warning, a stop.
 
-| config | accuracy |
-|---|---|
-| base 1B, zero-shot | 9.5% |
-| base 1B, with a system prompt | 15.5% |
-| base 1B, 8-shot | 19.0% |
-| fine-tuned, v1 dataset | 46.6% |
-| **fine-tuned, v2 dataset** | **62.9%** |
+**3. Fine-tune.** QLoRA on a 1B base model, one adapter per tool, on a free Colab T4 or
+any single GPU. The adapter is small. The base model is shared.
 
-Paired McNemar test on v1 vs v2: p = 0.006.
+**4. Quantize and ship.** Merge, convert to GGUF, quantize to 4-bit, put it next to the
+package. llama.cpp loads it on demand.
 
-**Read the 62.9% carefully.** The v2 training set covers 3,188 unique commands against
-v1's 298, so part of the gain is coverage rather than generalization. On the 33 test
-commands that appear in neither training set, v1 scores 36.4% and v2 scores 45.5%, and
-that difference is not significant (p = 0.58).
+Add a tool, you get its adapter. The harness, the scorer and the inference path stay
+the same.
 
-The result that does hold up is narrower and more interesting:
+## Why local
 
-| flags in the target command | n | v1 | v2 |
-|---|---|---|---|
-| 2 flags, unseen command | 7 | 0/7 | **4/7** |
-| 3 or more flags, unseen command | 11 | 0/11 | 1/11 |
+Because the machines where you most want help with a command are often the ones that
+cannot reach a hosted model. Air-gapped build hosts. Customer-site VMs. Networks where
+approving a new outbound endpoint costs more than the feature is worth.
 
-The v2 dataset was built specifically to teach flag composition. It did, at two flags,
-on commands the model had never seen. At three or more flags the problem is unsolved.
+There is a duller reason too: something you call fifty times a day should not have a
+per-call price or a round trip.
 
-### By category
+That constraint drives the whole design. No GPU and no network means a small model,
+which means the hard part is the data and the evaluation, not the model.
 
-| category | n | v1 | v2 |
-|---|---|---|---|
-| system | 16 | 68.8% | 81.2% |
-| compose | 15 | 46.7% | 80.0% |
-| network | 9 | 55.6% | 77.8% |
-| ps/images | 20 | 60.0% | 60.0% |
-| volume | 7 | 100.0% | 57.1% |
-| build | 9 | 55.6% | 55.6% |
-| exec | 11 | 9.1% | 54.5% |
-| run | 29 | 20.7% | 48.3% |
+## What runs today
 
-`volume` regressed because the v2 dataset deliberately starved a category that was
-already at 100%. All three new failures pick the wrong subcommand, not the wrong flags.
-Rebalancing away from a saturated category was not free.
+Docker is the worked example and it is the only one. `nlcli_wizard/dataset_v2.py`
+generates 5,000 Docker examples over 3,188 distinct commands, and the Colab notebook
+trains and scores an adapter against 116 hand-written held-out prompts.
 
-### Reproduce any number here
+The `-w` flag needs a shell function to intercept it. `scripts/docker-wizard.sh` has
+one you can paste into your shell profile. Per-library packaging, where the adapter
+arrives with `pip install`, is the direction and is not built yet.
 
-```bash
-python -m eval.run_eval --replay results/v2_finetune_generations.jsonl
-```
-
-Under a second, no model download, no GPU. Every run in `results/` is replayable this
-way: the generations are committed, not just the summaries.
-
-## Status
-
-**The weights are not downloadable yet.** `MODEL_REGISTRY` in
-`nlcli_wizard/model.py` points at `pranavkumaarofficial/nlcli-gemma3-docker` on
-HuggingFace, and that repo is private as of 2026-10-08. Until it is published, the
-only working paths are a GGUF you already have (`--model-path`) or training your own.
-`translate` prints the repo id, the filename and every path it searched when the
-download fails.
-
-The evaluation harness needs no weights and no GPU. If you are here to check whether
-the numbers hold, start there.
+Weights are not downloadable yet either. `MODEL_REGISTRY` in `nlcli_wizard/model.py`
+expects `docker_gemma3_4b_q4km.gguf` from `pranavkumaarofficial/nlcli-gemma3-docker`
+on HuggingFace, and that repo is still private. For now, bring your own GGUF with
+`--model-path`, or train one. If the download fails, `translate` prints the repo, the
+filename and every path it looked in.
 
 ## Quickstart
-
-CI runs on Python 3.10 and 3.12.
 
 ```bash
 git clone https://github.com/pranavkumaarofficial/nlcli-wizard.git
 cd nlcli-wizard
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 
-# Install llama-cpp-python from the prebuilt CPU wheel index FIRST. Without this, pip
-# resolves it to an sdist and compiles llama.cpp, which needs a C++ toolchain and
-# fails on Windows on a long path.
+# Install llama-cpp-python from the prebuilt CPU wheel index first. Without it, pip
+# grabs the sdist and compiles llama.cpp, which needs a C++ toolchain and fails on
+# Windows on a long path.
 pip install llama-cpp-python \
     --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
 
@@ -108,7 +97,7 @@ pip install -e .
 ```
 
 Fourteen packages, no compiler. `torch` and `transformers` are not runtime
-dependencies; the inference path is GGUF only.
+dependencies, because inference goes through GGUF and llama.cpp only.
 
 With a GGUF in `models/`:
 
@@ -118,137 +107,98 @@ python -m nlcli_wizard.cli translate --cli-tool docker \
 ```
 
 ```
-Loading model from models\docker_gemma3_4b_q4km.gguf...
 Input: run nginx on port 8080 in background
 Command: docker run -d -p 8080:80 nginx
-Confidence: 95%
-Runs nginx container in detached mode, mapping port 8080:80, container ID: nginx
 ```
 
-That is the real output. The confidence is meaningless and the explanation degrades
-after the first clause. Neither is scored; the evaluation reads only the `COMMAND:`
-line.
+On a four-thread laptop CPU that is 1.09 s to load the model and 1.85 s to answer.
 
-Measured on an 11th-gen Core i5-1135G7, 4 threads, CPU only: 1.09 s to load the model,
-1.85 s to generate, about 2.9 s for a cold invocation.
-
-### Run the evaluation without weights
+### Adding a tool
 
 ```bash
-pip install -e ".[dev]"
-python -m pytest -q tests                                           # 120 tests
-python -m eval.contamination --train data/docker_training.jsonl \
-                             --test  data/docker_test_handwritten.jsonl
+# 1. generate, excluding your held-out set at generation time
+python -m nlcli_wizard.dataset_v2 --out data/mytool_train.jsonl \
+                                  --exclude data/mytool_test.jsonl
+
+# 2. check it before spending GPU minutes
+python -m eval.contamination --train data/mytool_train.jsonl \
+                             --test  data/mytool_test.jsonl
+
+# 3. train in the notebook, then score the result
+python -m eval.run_eval --model models/mytool.gguf --template gemma3 \
+                        --llama-bin /path/to/llama-server --label mytool
+```
+
+Step 1 is still Docker-specific. Deriving the flag grammar from a tool's own `--help`
+rather than hand-written specs is the open piece of the pipeline.
+
+## Results
+
+Docker, 116 hand-written held-out prompts, no prompt overlap with training, scored by
+exact match, flag-order-normalized match and functional equivalence together.
+
+| | accuracy |
+|---|---|
+| base 1B, 8-shot prompting | 19.0% |
+| fine-tuned adapter | 62.9% |
+
+Composition is where it still falls over. Two flags in one command lands at 50%, three
+or more at 17%. That looks like a data coverage problem rather than a model size
+problem, and it is the next thing to fix.
+
+Reproduce any of it with no GPU and no model download:
+
+```bash
 python -m eval.run_eval --replay results/v2_finetune_generations.jsonl
 ```
 
-`eval/` has zero third-party dependencies. It is pure standard library.
-
-### Train your own
-
-[Colab notebook](https://colab.research.google.com/drive/1uBJJ_EqCMT8bMnCnVQHeN8USKu1ABddL)
-(free T4). The notebook runs baselines before training, aborts if the training file
-leaks the held-out set, and emits the ablation table above.
-
-```bash
-python -m nlcli_wizard.dataset_v2 --out data/my_train.jsonl \
-                                  --exclude data/docker_test_handwritten.jsonl
-```
-
-## How the evaluation works
-
-This is the part worth reading. The original 94% survived nine months because the
-evaluation logic lived in a private copy inside the training notebook, where nothing
-ever compared the two files.
-
-**Contamination is a gate, not a report.** The leakage audit runs before inference and
-prints above the accuracy. `--strict` exits non-zero rather than emit a number on a
-leaking pair. Four channels are checked: verbatim prompt overlap and near-duplicate
-prompts are fatal, shared generator templates are high severity, and target-command
-overlap is disclosed rather than failed, because generalizing to new phrasings of a
-known command is the actual task.
-
-**Three metrics, always together.** Exact match, flag-order-normalized match, and
-functional equivalence (`docker ps` equals `docker container ls`). What is deliberately
-not normalized away is `-d`, `-i`, `-t` and `-a`. Those change what the command does. A
-scorer that forgave them would have rated the `exec` category at 90% while the model
-was producing non-interactive shells.
-
-**Results split by novelty.** Unseen command versus unseen phrasing of a known command
-are reported separately, because a single blended number lets the easier partition
-carry the harder one.
-
-**The harness has its own tests.** Building it surfaced two real parser bugs: `-it` did
-not expand into `-i -t`, and `-t` was globally value-consuming when it only takes a
-value under `build`, so `docker run -t nginx` parsed as a tag with no image. Both would
-have mis-scored every interactive example.
-
-Two further bugs were found later, and both had biased results toward the fine-tune.
-A markdown fence labelled ```` ```docker ```` was parsed as the command itself, scoring
-65 of 116 baseline generations as zero and reading the zero-shot baseline as 3.4%
-instead of 9.5%. And recorded runs could not be re-scored at all, because the replay
-path keyed on a prompt string that differs between the notebook and the local harness.
-Both are fixed, with regression tests.
+Every run in `results/` ships its per-generation records, not just a summary, so the
+numbers are checkable. Method and caveats in
+[`docs/EVAL_METHODOLOGY.md`](docs/EVAL_METHODOLOGY.md).
 
 ## Design notes
 
-**Why fine-tune a small local model instead of prompting a hosted one.** For most
-people, asking a frontier model is the right answer. It stops being the right answer on
-a host with no egress, where the security review of a new outbound endpoint costs more
-than the feature. The commands you most want help composing are often the ones you run
-in exactly those places. That constraint rules out GPUs and network calls, which rules
-out large models, which is the entire problem this repo is about.
+**The evaluation is the part I would defend.** `eval/` has no third-party
+dependencies, it is the same code in the notebook and on a laptop, and the
+contamination audit runs before inference and prints above the accuracy. Splits are by
+target command, not by row, because a generator that emits several paraphrases per
+command will otherwise put paraphrases of the same command on both sides. Flags that
+change behaviour, `-d` and `-i` and `-t` and `-a`, are deliberately not normalized
+away.
 
-**Q4_K_M on a narrow model is not what the name suggests.** K-quants operate on
+**Q4_K_M on a narrow model is not quite what the name says.** K-quants work on
 256-element superblocks, and this model's embedding width is 1152, which is not a
-multiple of 256. Every tensor with a 1152-long row falls back to a non-K quant. Of 183
-two-dimensional tensors, 117 are Q5_0 and 14 are Q8_0, and only 52 are actually Q4_K or
-Q6_K. The file is roughly 60% Q5_0 by parameter count. The correlation with row length
-holds for 183 of 183. Check it yourself with standard library only:
+multiple of 256. Every tensor with a 1152-long row falls back to a non-K quant, so the
+file ends up about 60% Q5_0 by parameter count. Worth knowing before picking a
+quantization for a small model. Check any GGUF with standard library only:
 
 ```bash
-python scripts/gguf_header.py models/docker_gemma3_4b_q4km.gguf
+python scripts/gguf_header.py models/your-model.gguf
 ```
-
-**What I would do differently.** Write the held-out set first, before the generator,
-and not in the same week by the same person. The first build of the v2 dataset leaked
-12 test prompts verbatim because the author reached for the same phrasings twice. Care
-does not prevent that; a generation-time blocklist does, and it is now the default.
 
 ## Limitations
 
-- **Not usable for the two most common Docker verbs.** `run` is 48.3% and `exec` is
-  54.5%. Better than v1, not good.
-- **Three or more flags is unsolved.** 1 of 11 on unseen commands.
-- **Ignore the `CONFIDENCE` field.** The dataset generator filled it with
-  `random.uniform(0.90, 0.97)`, so the model was trained to predict a random number.
-  Worse, `nlcli_wizard/agent.py` gates its success flag on that number, so a correct command with a
-  low sampled confidence is reported as a failed translation.
-- **Single seed.** No variance estimates. At n=116 the 95% interval is roughly plus or
-  minus 9 points near 50%.
-- **The test set is one author's phrasing.** Prompts collected from real users would be
-  stronger evidence.
-- **Functional equivalence is a heuristic, not execution.** Two commands scored
-  equivalent may still differ in effect.
-- **The CLI lowercases your input**, which destroys build-arg values and env var names.
-- **The model is a 1B, not the 4B the filename claims.** Its header reports
-  `size_label 1000M` and 999,885,952 parameters. The 46.6% and 62.9% both belong to a
-  1B. Recorded in `docs/EVAL_METHODOLOGY.md`.
-- **Docker only.** The venvy integration's accuracy was withdrawn for the same
-  contamination reason.
+- Docker only. One adapter exists.
+- `run` and `exec`, the two verbs people most want help with, sit around 50%.
+- Three or more flags in one command is largely unsolved.
+- The `CONFIDENCE` field the model emits is meaningless. The dataset generator filled
+  it with a random number, so that is what the model learned to predict. Ignore it.
+- Single seed, no variance estimates. At 116 examples the 95% interval is roughly plus
+  or minus 9 points.
+- The held-out set is one person's phrasing. Prompts from real users would be stronger.
+- The CLI lowercases your input, which breaks build-arg values and env var names.
 
-## Repo layout
+## Layout
 
 ```
-nlcli_wizard/     CLI, GGUF loading, prompt formatting, dataset generators
-eval/             contamination audit, command-level splits, normalization,
-                  scoring, inference backends, entry point. No third-party deps.
-tests/            120 tests
-data/             v1 (594 rows), v2 (5,000 rows), 116 hand-written held-out prompts
-results/          every run, summaries and per-generation records, all replayable
-scripts/          gguf_header.py, shell wrappers
-training/         Colab notebook, generated by build_notebook.py
-docs/             EVAL_METHODOLOGY.md
+nlcli_wizard/   CLI, GGUF loading, prompt formatting, dataset generators
+eval/           contamination audit, command-level splits, normalization, scoring,
+                inference backends. No third-party dependencies.
+tests/          120 tests
+data/           training sets and the hand-written held-out prompts
+results/        every run, summaries and per-generation records
+scripts/        gguf_header.py, shell wrappers
+training/       Colab notebook, generated by build_notebook.py
 ```
 
 ## Contributing
